@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput, ActivityIndicator } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
 import Header from '../components/Header';
 
 const HODStudents = () => {
@@ -22,7 +31,9 @@ const HODStudents = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true); // Show loader
-      const response = await fetch('http://192.168.1.45:5000/api/students');
+      const response = await fetch(
+        'https://placement-backend-navy.vercel.app/api/students',
+      );
       const data = await response.json();
       setStudentsData(data);
     } catch (error) {
@@ -35,13 +46,16 @@ const HODStudents = () => {
   const handleAddStudent = async () => {
     try {
       setLoading(true); // Show loader
-      const response = await fetch('http://192.168.1.45:5000/api/students', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://placement-backend-navy.vercel.app/api/students',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newStudent),
         },
-        body: JSON.stringify(newStudent),
-      });
+      );
       const data = await response.json();
       setStudentsData([...studentsData, data]);
       setModalVisible(false);
@@ -60,128 +74,145 @@ const HODStudents = () => {
     }
   };
 
-
   return (
     <>
-    <Header title={'All Students'}/>
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addButtonText}>Add New</Text>
-      </TouchableOpacity>
+      <Header title={'All Students'} />
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setModalVisible(true)}>
+          <Text style={styles.addButtonText}>Add New</Text>
+        </TouchableOpacity>
 
-      <ScrollView contentContainerStyle={styles.studentsContainer}>
-        {studentsData.map((student) => (
-          <View key={student._id} style={styles.card}>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Text style={styles.label}>ID:</Text>
-                <Text>{student._id}</Text>
+        <ScrollView contentContainerStyle={styles.studentsContainer}>
+          {studentsData.map(student => (
+            <View key={student._id} style={styles.card}>
+              <View style={styles.row}>
+                <View style={styles.column}>
+                  <Text style={styles.label}>ID:</Text>
+                  <Text>{student._id}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Name:</Text>
+                  <Text>{student.name}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Address:</Text>
+                  <Text>{student.address}</Text>
+                </View>
               </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Name:</Text>
-                <Text>{student.name}</Text>
+              <View style={styles.row}>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Gender:</Text>
+                  <Text>{student.gender}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>DOB:</Text>
+                  <Text>{student.dob}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Phone:</Text>
+                  <Text>{student.phone}</Text>
+                </View>
               </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Address:</Text>
-                <Text>{student.address}</Text>
+              <View style={styles.row}>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Branch:</Text>
+                  <Text>{student.branch}</Text>
+                </View>
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.viewButton]}
+                    onPress={() => handleView(student)}>
+                    <Text style={styles.actionButtonText}>View</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.editButton]}
+                    onPress={() => handleEdit(student)}>
+                    <Text style={styles.actionButtonText}>Edit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.deleteButton]}
+                    onPress={() => handleDelete(student)}>
+                    <Text style={styles.actionButtonText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Text style={styles.label}>Gender:</Text>
-                <Text>{student.gender}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>DOB:</Text>
-                <Text>{student.dob}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Phone:</Text>
-                <Text>{student.phone}</Text>
-              </View>
-            </View>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Text style={styles.label}>Branch:</Text>
-                <Text>{student.branch}</Text>
-              </View>
-              <View style={styles.actionButtons}>
-                <TouchableOpacity style={[styles.actionButton, styles.viewButton]} onPress={() => handleView(student)}>
-                  <Text style={styles.actionButtonText}>View</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionButton, styles.editButton]} onPress={() => handleEdit(student)}>
-                  <Text style={styles.actionButtonText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionButton, styles.deleteButton]} onPress={() => handleDelete(student)}>
-                  <Text style={styles.actionButtonText}>Delete</Text>
-                </TouchableOpacity>
-              </View>
+          ))}
+        </ScrollView>
+
+        {loading && (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+
+        {/* Modal for adding new student */}
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              {/* Inputs for new student */}
+              <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={newStudent.name}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, name: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Address"
+                value={newStudent.address}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, address: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Gender"
+                value={newStudent.gender}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, gender: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Date of Birth"
+                value={newStudent.dob}
+                onChangeText={text => setNewStudent({...newStudent, dob: text})}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone"
+                value={newStudent.phone}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, phone: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Branch"
+                value={newStudent.branch}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, branch: text})
+                }
+              />
+              {/* Add Student Button */}
+              <TouchableOpacity
+                style={styles.addStudentButton}
+                onPress={handleAddStudent}>
+                <Text style={styles.addStudentButtonText}>Add Student</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        ))}
-      </ScrollView>
-
-
-      {loading && (
-        <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
-
-      {/* Modal for adding new student */}
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {/* Inputs for new student */}
-            <TextInput
-              style={styles.input}
-              placeholder="Name"
-              value={newStudent.name}
-              onChangeText={(text) => setNewStudent({ ...newStudent, name: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Address"
-              value={newStudent.address}
-              onChangeText={(text) => setNewStudent({ ...newStudent, address: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Gender"
-              value={newStudent.gender}
-              onChangeText={(text) => setNewStudent({ ...newStudent, gender: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Date of Birth"
-              value={newStudent.dob}
-              onChangeText={(text) => setNewStudent({ ...newStudent, dob: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Phone"
-              value={newStudent.phone}
-              onChangeText={(text) => setNewStudent({ ...newStudent, phone: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Branch"
-              value={newStudent.branch}
-              onChangeText={(text) => setNewStudent({ ...newStudent, branch: text })}
-            />
-            {/* Add Student Button */}
-            <TouchableOpacity style={styles.addStudentButton} onPress={handleAddStudent}>
-              <Text style={styles.addStudentButtonText}>Add Student</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
     </>
   );
 };
@@ -213,7 +244,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
@@ -270,7 +301,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
