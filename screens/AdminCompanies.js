@@ -1,5 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, TextInput, Alert, ActivityIndicator } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import Header from '../components/Header';
 
 const AdminCompanies = () => {
@@ -21,7 +31,9 @@ const AdminCompanies = () => {
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://192.168.1.45:5000/api/companies');
+      const response = await fetch(
+        'https://placement-backend-navy.vercel.app/api/companies',
+      );
       const data = await response.json();
       setCompaniesData(data);
     } catch (error) {
@@ -34,13 +46,16 @@ const AdminCompanies = () => {
   const handleAddCompany = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://192.168.1.45:5000/api/companies', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://placement-backend-navy.vercel.app/api/companies',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newCompany),
         },
-        body: JSON.stringify(newCompany),
-      });
+      );
       const data = await response.json();
       setCompaniesData([...companiesData, data]);
       setModalVisible(false);
@@ -59,13 +74,13 @@ const AdminCompanies = () => {
     }
   };
 
-  const handleDeleteCompany = async (id) => {
+  const handleDeleteCompany = async id => {
     try {
       setLoading(true);
       await fetch(`http://192.168.1.45:5000/api/companies/${id}`, {
         method: 'DELETE',
       });
-      setCompaniesData(companiesData.filter((company) => company._id !== id));
+      setCompaniesData(companiesData.filter(company => company._id !== id));
     } catch (error) {
       console.error('Error deleting company:', error);
       Alert.alert('Error', 'Failed to delete company. Please try again later.');
@@ -76,112 +91,124 @@ const AdminCompanies = () => {
 
   return (
     <>
-    <Header title={'All Companies'}/>
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addButtonText}>Add New Company</Text>
-      </TouchableOpacity>
+      <Header title={'All Companies'} />
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setModalVisible(true)}>
+          <Text style={styles.addButtonText}>Add New Company</Text>
+        </TouchableOpacity>
 
-      <ScrollView contentContainerStyle={styles.companiesContainer}>
-        {companiesData.map((company) => (
-          <View key={company._id} style={styles.card}>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Text style={styles.label}>ID:</Text>
-                <Text>{company._id}</Text>
+        <ScrollView contentContainerStyle={styles.companiesContainer}>
+          {companiesData.map(company => (
+            <View key={company._id} style={styles.card}>
+              <View style={styles.row}>
+                <View style={styles.column}>
+                  <Text style={styles.label}>ID:</Text>
+                  <Text>{company._id}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Company Name:</Text>
+                  <Text>{company.companyName}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Address:</Text>
+                  <Text>{company.address}</Text>
+                </View>
               </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Company Name:</Text>
-                <Text>{company.companyName}</Text>
+              <View style={styles.row}>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Website:</Text>
+                  <Text>{company.website}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Phone:</Text>
+                  <Text>{company.phone}</Text>
+                </View>
+                <View style={styles.column}>
+                  <Text style={styles.label}>Email:</Text>
+                  <Text>{company.email}</Text>
+                </View>
               </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Address:</Text>
-                <Text>{company.address}</Text>
+              <View style={styles.row}>
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity
+                    style={[styles.actionButton, styles.deleteButton]}
+                    onPress={() => handleDeleteCompany(company._id)}>
+                    <Text style={styles.actionButtonText}>Delete</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Text style={styles.label}>Website:</Text>
-                <Text>{company.website}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Phone:</Text>
-                <Text>{company.phone}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Email:</Text>
-                <Text>{company.email}</Text>
-              </View>
-            </View>
-            <View style={styles.row}>
-              <View style={styles.actionButtons}>
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.deleteButton]}
-                  onPress={() => handleDeleteCompany(company._id)}
-                >
-                  <Text style={styles.actionButtonText}>Delete</Text>
-                </TouchableOpacity>
-              </View>
+          ))}
+        </ScrollView>
+
+        {/* Loader */}
+        {loading && (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+
+        {/* Modal for adding new company */}
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              {/* Inputs for new company */}
+              <TextInput
+                style={styles.input}
+                placeholder="Company Name"
+                value={newCompany.companyName}
+                onChangeText={text =>
+                  setNewCompany({...newCompany, companyName: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Address"
+                value={newCompany.address}
+                onChangeText={text =>
+                  setNewCompany({...newCompany, address: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Website"
+                value={newCompany.website}
+                onChangeText={text =>
+                  setNewCompany({...newCompany, website: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone"
+                value={newCompany.phone}
+                onChangeText={text =>
+                  setNewCompany({...newCompany, phone: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={newCompany.email}
+                onChangeText={text =>
+                  setNewCompany({...newCompany, email: text})
+                }
+              />
+              {/* Add Company Button */}
+              <TouchableOpacity
+                style={styles.addCompanyButton}
+                onPress={handleAddCompany}>
+                <Text style={styles.addCompanyButtonText}>Add Company</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        ))}
-      </ScrollView>
-
-      {/* Loader */}
-      {loading && (
-        <View style={styles.loaderContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      )}
-
-      {/* Modal for adding new company */}
-      <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {/* Inputs for new company */}
-            <TextInput
-              style={styles.input}
-              placeholder="Company Name"
-              value={newCompany.companyName}
-              onChangeText={(text) => setNewCompany({ ...newCompany, companyName: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Address"
-              value={newCompany.address}
-              onChangeText={(text) => setNewCompany({ ...newCompany, address: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Website"
-              value={newCompany.website}
-              onChangeText={(text) => setNewCompany({ ...newCompany, website: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Phone"
-              value={newCompany.phone}
-              onChangeText={(text) => setNewCompany({ ...newCompany, phone: text })}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={newCompany.email}
-              onChangeText={(text) => setNewCompany({ ...newCompany, email: text })}
-            />
-            {/* Add Company Button */}
-            <TouchableOpacity style={styles.addCompanyButton} onPress={handleAddCompany}>
-              <Text style={styles.addCompanyButtonText}>Add Company</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
     </>
   );
 };
@@ -213,7 +240,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
@@ -264,7 +291,7 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
