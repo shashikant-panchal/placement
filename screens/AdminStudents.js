@@ -34,9 +34,7 @@ const AdminStudents = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/students',
-      );
+      const response = await fetch('https://npb-lyart.vercel.app/api/students');
       const data = await response.json();
       setStudentsData(data);
     } catch (error) {
@@ -50,7 +48,7 @@ const AdminStudents = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://placement-backend-navy.vercel.app/api/selectStudent/${studentId}`,
+        `https://npb-lyart.vercel.app/api/selectStudent/${studentId}`,
         {
           method: 'POST',
           headers: {
@@ -73,7 +71,7 @@ const AdminStudents = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/students',
+        'https://npb-lyart.vercel.app/api/students',
         {
           method: 'POST',
           headers: {

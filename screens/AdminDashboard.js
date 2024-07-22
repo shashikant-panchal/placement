@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,78 +13,69 @@ import Header from '../components/Header';
 
 const AdminDashboard = () => {
   const navigation = useNavigation();
-  const [studentsNumber, setStudentsNumber] = useState(0);
-  const [hodsNumber, setHODsNumber] = useState(0);
-  const [companiesNumber, setCompaniesNumber] = useState(0);
-  const [selectedStudents, setSelectedStudents] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({
+    studentsNumber: 0,
+    hodsNumber: 0,
+    companiesNumber: 0,
+    selectedStudents: [],
+  });
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [studentsRes, hodsRes, companiesRes, selectedStudentsRes] =
+        await Promise.all([
+          fetch(
+            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/students',
+          ),
+          fetch(
+            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/hods',
+          ),
+          fetch(
+            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/companies',
+          ),
+          fetch(
+            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/selectedStudents',
+          ),
+        ]);
+
+      if (
+        !studentsRes.ok ||
+        !hodsRes.ok ||
+        !companiesRes.ok ||
+        !selectedStudentsRes.ok
+      ) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const studentsData = await studentsRes.json();
+      const hodsData = await hodsRes.json();
+      const companiesData = await companiesRes.json();
+      const selectedStudentsData = await selectedStudentsRes.json();
+
+      setData({
+        studentsNumber: studentsData.length,
+        hodsNumber: hodsData.length,
+        companiesNumber: companiesData.length,
+        selectedStudents: selectedStudentsData,
+      });
+    } catch (error) {
+      console.error('Network request failed:', error.message);
+      setError(error.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      await Promise.all([
-        fetchStudents(),
-        fetchHODs(),
-        fetchCompanies(),
-        fetchSelectedStudents(),
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchStudents = async () => {
-    try {
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/students',
-      );
-      const data = await response.json();
-      setStudentsNumber(data.length);
-    } catch (error) {
-      console.error('Error fetching students:', error);
-    }
-  };
-
-  const fetchHODs = async () => {
-    try {
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/hods',
-      );
-      const data = await response.json();
-      setHODsNumber(data.length);
-    } catch (error) {
-      console.error('Error fetching HODs:', error);
-    }
-  };
-
-  const fetchCompanies = async () => {
-    try {
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/companies',
-      );
-      const data = await response.json();
-      setCompaniesNumber(data.length);
-    } catch (error) {
-      console.error('Error fetching companies:', error);
-    }
-  };
-
-  const fetchSelectedStudents = async () => {
-    try {
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/selectedStudents',
-      );
-      const data = await response.json();
-      setSelectedStudents(data);
-    } catch (error) {
-      console.error('Error fetching selected students:', error);
-    }
-  };
+  }, [fetchData]);
 
   const navigateToScreen = screenName => {
     navigation.navigate(screenName);
@@ -92,7 +83,7 @@ const AdminDashboard = () => {
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchData().then(() => setRefreshing(false));
+    fetchData();
   };
 
   return (
@@ -103,6 +94,8 @@ const AdminDashboard = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+        {error && <Text style={styles.errorText}>Error: {error}</Text>}
+
         {/* First Row */}
         <View style={styles.row}>
           <TouchableOpacity
@@ -113,7 +106,7 @@ const AdminDashboard = () => {
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                studentsNumber
+                data.studentsNumber
               )}
             </Text>
           </TouchableOpacity>
@@ -125,7 +118,7 @@ const AdminDashboard = () => {
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                hodsNumber
+                data.hodsNumber
               )}
             </Text>
           </TouchableOpacity>
@@ -141,7 +134,7 @@ const AdminDashboard = () => {
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                companiesNumber
+                data.companiesNumber
               )}
             </Text>
           </TouchableOpacity>
@@ -153,7 +146,7 @@ const AdminDashboard = () => {
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                selectedStudents.length
+                data.selectedStudents.length
               )}
             </Text>
           </TouchableOpacity>
@@ -194,6 +187,10 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 20,
   },
 });
 

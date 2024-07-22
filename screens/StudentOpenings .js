@@ -20,9 +20,7 @@ const StudentOpenings = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/jobs',
-      );
+      const response = await fetch('https://npb-lyart.vercel.app/api/jobs');
       const data = await response.json();
       setJobs(data);
       setLoading(false);

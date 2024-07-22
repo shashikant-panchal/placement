@@ -19,7 +19,7 @@ const AdminSelectedStudents = () => {
   const fetchSelectedStudents = async () => {
     try {
       const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/selectedStudents',
+        'https://npb-lyart.vercel.app/api/selectedStudents',
       );
       const data = await response.json();
       setSelectedStudents(data);

@@ -32,7 +32,7 @@ const AdminCompanies = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/companies',
+        'https://npb-lyart.vercel.app/api/companies',
       );
       const data = await response.json();
       setCompaniesData(data);
@@ -47,7 +47,7 @@ const AdminCompanies = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/companies',
+        'https://npb-lyart.vercel.app/api/companies',
         {
           method: 'POST',
           headers: {

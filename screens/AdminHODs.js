@@ -32,9 +32,7 @@ const AdminHODs = () => {
   const fetchHODs = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/hods',
-      );
+      const response = await fetch('https://npb-lyart.vercel.app/api/hods');
       const data = await response.json();
       setHODsData(data);
     } catch (error) {
@@ -47,16 +45,13 @@ const AdminHODs = () => {
   const handleAddHOD = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        'https://placement-backend-navy.vercel.app/api/hods',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newHOD),
+      const response = await fetch('https://npb-lyart.vercel.app/api/hods', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(newHOD),
+      });
       const data = await response.json();
       setHODsData([...hodsData, data]);
       setModalVisible(false);

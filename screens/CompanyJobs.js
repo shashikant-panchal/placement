@@ -40,7 +40,7 @@ const CompanyJobs = () => {
       salaryPackage: parseFloat(salaryPackage),
     };
 
-    fetch('https://placement-backend-navy.vercel.app/api/jobs', {
+    fetch('https://npb-lyart.vercel.app/api/jobs', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
