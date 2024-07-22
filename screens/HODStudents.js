@@ -120,7 +120,7 @@ const HODStudents = () => {
                   <Text style={styles.label}>Branch:</Text>
                   <Text>{student.branch}</Text>
                 </View>
-                <View style={styles.actionButtons}>
+                {/* <View style={styles.actionButtons}>
                   <TouchableOpacity
                     style={[styles.actionButton, styles.viewButton]}
                     onPress={() => handleView(student)}>
@@ -136,7 +136,7 @@ const HODStudents = () => {
                     onPress={() => handleDelete(student)}>
                     <Text style={styles.actionButtonText}>Delete</Text>
                   </TouchableOpacity>
-                </View>
+                </View> */}
               </View>
             </View>
           ))}

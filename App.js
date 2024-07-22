@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { AuthProvider, AuthContext } from './AuthContext';
+import {Provider as PaperProvider} from 'react-native-paper';
+import {AuthProvider, AuthContext} from './AuthContext';
 import LoginScreen from './screens/LoginScreeen';
 import AdminDashboard from './screens/AdminDashboard';
 import AdminStudents from './screens/AdminStudents';
@@ -24,12 +24,13 @@ import CompanyHome from './screens/CompanyHome';
 import CompanyJobs from './screens/CompanyJobs';
 import CompanyApplications from './screens/CompanyApplications';
 import ProfileScreen from './screens/ProfileScreen';
+import SignUpScreen from './screens/SignUpScreen';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const AdminStack = () => (
-  <Stack.Navigator screenOptions={{headerShown:false}}>
+  <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="Dashboard" component={AdminDashboard} />
     <Stack.Screen name="Students" component={AdminStudents} />
     <Stack.Screen name="HODs" component={AdminHODs} />
@@ -43,14 +44,13 @@ const AdminTabs = () => (
     initialRouteName="Dashboard"
     activeColor="black"
     shifting={true}
-    barStyle={{ backgroundColor: '#fff' }}
-  >
+    barStyle={{backgroundColor: '#fff'}}>
     <Tab.Screen
       name="Dashboard"
       component={AdminStack}
       options={{
         tabBarLabel: 'Dashboard',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="home" color={color} size={26} />
         ),
       }}
@@ -60,7 +60,7 @@ const AdminTabs = () => (
       component={AdminStudents}
       options={{
         tabBarLabel: 'Students',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="people" color={color} size={26} />
         ),
       }}
@@ -70,7 +70,7 @@ const AdminTabs = () => (
       component={AdminHODs}
       options={{
         tabBarLabel: "HOD's",
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="school" color={color} size={26} />
         ),
       }}
@@ -80,7 +80,7 @@ const AdminTabs = () => (
       component={AdminCompanies}
       options={{
         tabBarLabel: 'Companies',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="business" color={color} size={26} />
         ),
       }}
@@ -90,7 +90,7 @@ const AdminTabs = () => (
       component={AdminOpenings}
       options={{
         tabBarLabel: 'Openings',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="briefcase" color={color} size={26} />
         ),
       }}
@@ -100,12 +100,12 @@ const AdminTabs = () => (
       component={AdminSelectedStudents}
       options={{
         tabBarLabel: 'Selected Students',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="checkmark-done" color={color} size={26} />
         ),
       }}
     />
-    <Tab.Screen
+    {/* <Tab.Screen
       name="College Info"
       component={AdminCollegeInfo}
       options={{
@@ -114,7 +114,7 @@ const AdminTabs = () => (
           <Ionicons name="information-circle" color={color} size={26} />
         ),
       }}
-    />
+    /> */}
     {/* <Tab.Screen
       name="Profile"
       component={ProfileScreen}
@@ -133,14 +133,13 @@ const HODTabs = () => (
     initialRouteName="HODHome"
     activeColor="black"
     shifting={true}
-    barStyle={{ backgroundColor: '#fff' }}
-  >
+    barStyle={{backgroundColor: '#fff'}}>
     <Tab.Screen
       name="HODHome"
       component={HODHome}
       options={{
         tabBarLabel: 'Home',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="home" color={color} size={26} />
         ),
       }}
@@ -150,7 +149,7 @@ const HODTabs = () => (
       component={HODStudents}
       options={{
         tabBarLabel: 'Students',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="people" color={color} size={26} />
         ),
       }}
@@ -160,7 +159,7 @@ const HODTabs = () => (
       component={HODPlacementDrive}
       options={{
         tabBarLabel: 'Placement Drive',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="briefcase" color={color} size={26} />
         ),
       }}
@@ -183,14 +182,13 @@ const StudentTabs = () => (
     initialRouteName="StudentHome"
     activeColor="black"
     shifting={true}
-    barStyle={{ backgroundColor: '#fff' }}
-  >
+    barStyle={{backgroundColor: '#fff'}}>
     <Tab.Screen
       name="StudentHome"
       component={StudentHome}
       options={{
         tabBarLabel: 'Home',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="home" color={color} size={26} />
         ),
       }}
@@ -200,7 +198,7 @@ const StudentTabs = () => (
       component={StudentUploadInfo}
       options={{
         tabBarLabel: 'Upload Info',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="cloud-upload" color={color} size={26} />
         ),
       }}
@@ -210,7 +208,7 @@ const StudentTabs = () => (
       component={StudentOpenings}
       options={{
         tabBarLabel: 'Openings',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="briefcase" color={color} size={26} />
         ),
       }}
@@ -220,7 +218,7 @@ const StudentTabs = () => (
       component={StudentAppliedJobs}
       options={{
         tabBarLabel: 'Applied Jobs',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="document-text" color={color} size={26} />
         ),
       }}
@@ -243,14 +241,13 @@ const CompanyTabs = () => (
     initialRouteName="CompanyHome"
     activeColor="black"
     shifting={true}
-    barStyle={{ backgroundColor: '#fff' }}
-  >
+    barStyle={{backgroundColor: '#fff'}}>
     <Tab.Screen
       name="CompanyHome"
       component={CompanyHome}
       options={{
         tabBarLabel: 'Home',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="home" color={color} size={26} />
         ),
       }}
@@ -259,8 +256,8 @@ const CompanyTabs = () => (
       name="CompanyJobs"
       component={CompanyJobs}
       options={{
-        tabBarLabel: 'Jobs',
-        tabBarIcon: ({ color }) => (
+        tabBarLabel: 'Add Jobs',
+        tabBarIcon: ({color}) => (
           <Ionicons name="briefcase" color={color} size={26} />
         ),
       }}
@@ -270,7 +267,7 @@ const CompanyTabs = () => (
       component={CompanyApplications}
       options={{
         tabBarLabel: 'Applications',
-        tabBarIcon: ({ color }) => (
+        tabBarIcon: ({color}) => (
           <Ionicons name="document-text" color={color} size={26} />
         ),
       }}
@@ -294,7 +291,7 @@ const App = () => {
       <PaperProvider>
         <NavigationContainer>
           <AuthContext.Consumer>
-            {({ userRole }) =>
+            {({userRole}) =>
               userRole ? (
                 userRole === 'admin' ? (
                   <AdminTabs />

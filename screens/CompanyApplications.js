@@ -1,110 +1,85 @@
-import React from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  StyleSheet,
+  RefreshControl,
+} from 'react-native';
+import JobCard from '../components/JobCard';
 import Header from '../components/Header';
 
-// Sample JSON data for applied jobs
-const appliedJobsData = [
-  { id: '1', companyName: 'ABC Inc.', designation: 'Software Engineer', applyDate: '2024-06-30', status: 'Pending' },
-  { id: '2', companyName: 'XYZ Ltd.', designation: 'Product Manager', applyDate: '2024-06-29', status: 'Accepted' },
-  { id: '3', companyName: 'PQR Corp.', designation: 'UI/UX Designer', applyDate: '2024-06-28', status: 'Rejected' },
-];
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'Pending':
-      return '#ffcc00'; // yellow
-    case 'Accepted':
-      return '#00cc66'; // green
-    case 'Rejected':
-      return '#ff6666'; // red
-    default:
-      return '#999999'; // gray for unknown status
-  }
-};
-
 const CompanyApplications = () => {
-  const renderItem = ({ item }) => (
-    <View style={[styles.jobCard, { borderColor: getStatusColor(item.status) }]}>
-      <Text style={styles.jobId}>Job ID: {item.id}</Text>
-      <Text style={styles.companyName}>Company: {item.companyName}</Text>
-      <Text style={styles.designation}>Designation: {item.designation}</Text>
-      <Text style={styles.applyDate}>Apply Date: {item.applyDate}</Text>
-      <View style={[styles.statusContainer, { backgroundColor: getStatusColor(item.status) }]}>
-        <Text style={styles.status}>{item.status}</Text>
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
+  const fetchJobs = async () => {
+    try {
+      const response = await fetch(
+        'https://placement-backend-navy.vercel.app/api/jobs',
+      );
+      const data = await response.json();
+      setJobs(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchJobs().then(() => {
+      setRefreshing(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
       </View>
-    </View>
-  );
+    );
+  }
 
   return (
     <>
-    <Header title={'CompanyApplications'} />
-    <View style={styles.container}>
-      <FlatList
-        data={appliedJobsData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
+      <Header title={'Jobs Listing'} />
+      <View style={styles.container}>
+        <FlatList
+          data={jobs}
+          renderItem={({item}) => <JobCard job={item} />}
+          keyExtractor={item => item._id}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#0000ff']}
+              tintColor="#0000ff"
+            />
+          }
+        />
+      </View>
     </>
   );
 };
 
-export default CompanyApplications;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  jobCard: {
-    backgroundColor: '#ffffff',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#cccccc',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  jobId: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  companyName: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  designation: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  applyDate: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  statusContainer: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-    marginBottom: 5,
-  },
-  status: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
+
+export default CompanyApplications;

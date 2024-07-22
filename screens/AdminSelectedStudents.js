@@ -1,72 +1,79 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  ActivityIndicator,
+} from 'react-native';
 import Header from '../components/Header';
 
 const AdminSelectedStudents = () => {
-  const selectedStudents = [
-    {
-      id: 1,
-      name: 'John Doe',
-      branch: 'Computer Science',
-      companyName: 'ABC Inc.',
-      designation: 'Software Engineer',
-      salary: '80,000',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      branch: 'Electrical Engineering',
-      companyName: 'XYZ Corp.',
-      designation: 'Web Developer',
-      salary: '70,000',
-    },
-    {
-      id: 3,
-      name: 'Alice Johnson',
-      branch: 'Mechanical Engineering',
-      companyName: 'PQR Ltd.',
-      designation: 'Data Analyst',
-      salary: '75,000',
-    },
-    {
-      id: 4,
-      name: 'Bob Brown',
-      branch: 'Information Technology',
-      companyName: 'MNO Solutions',
-      designation: 'UX Designer',
-      salary: '85,000',
-    },
-  ];
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSelectedStudents();
+  }, []);
+
+  const fetchSelectedStudents = async () => {
+    try {
+      const response = await fetch(
+        'https://placement-backend-navy.vercel.app/api/selectedStudents',
+      );
+      const data = await response.json();
+      setSelectedStudents(data);
+    } catch (error) {
+      console.error('Error fetching selected students:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.loaderContainer]}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  const renderItem = ({item}) => (
+    <View style={styles.card}>
+      <Text style={styles.name}>{item.name}</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoLabel}>Branch:</Text>
+        <Text style={styles.infoText}>{item.branch}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoLabel}>Address:</Text>
+        <Text style={styles.infoText}>{item.address}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoLabel}>Gender:</Text>
+        <Text style={styles.infoText}>{item.gender}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoLabel}>Date of Birth:</Text>
+        <Text style={styles.infoText}>{item.dob}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoLabel}>Phone:</Text>
+        <Text style={styles.infoText}>{item.phone}</Text>
+      </View>
+    </View>
+  );
 
   return (
-    <>
-    <Header title={'Selected Students'}/>
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.studentsContainer}>
-        {selectedStudents.map((student) => (
-          <View key={student.id} style={styles.card}>
-            <Text style={styles.title}>{student.name}</Text>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Branch:</Text>
-              <Text style={styles.value}>{student.branch}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Company Name:</Text>
-              <Text style={styles.value}>{student.companyName}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Designation:</Text>
-              <Text style={styles.value}>{student.designation}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Salary:</Text>
-              <Text style={styles.value}>₹{student.salary} LPA</Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      <Header title="Selected Students" />
+      <FlatList
+        data={selectedStudents}
+        renderItem={renderItem}
+        keyExtractor={item => item._id}
+        contentContainerStyle={styles.studentsContainer}
+      />
     </View>
-    </>
   );
 };
 
@@ -74,10 +81,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
-    padding: 16,
+  },
+  loaderContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   studentsContainer: {
-    flexGrow: 1,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
   },
   card: {
     backgroundColor: '#fff',
@@ -85,28 +96,26 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
   },
-  title: {
+  name: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  infoRow: {
+  infoContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 4,
   },
-  label: {
-    color: '#666',
-    marginRight: 4,
+  infoLabel: {
+    fontWeight: 'bold',
+    width: 100,
   },
-  value: {
+  infoText: {
     flex: 1,
-    textAlign: 'right',
   },
 });
 

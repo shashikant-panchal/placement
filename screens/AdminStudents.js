@@ -8,6 +8,8 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  Alert,
+  RefreshControl,
 } from 'react-native';
 import Header from '../components/Header';
 
@@ -23,6 +25,7 @@ const AdminStudents = () => {
     phone: '',
     branch: '',
   });
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchStudents();
@@ -30,24 +33,45 @@ const AdminStudents = () => {
 
   const fetchStudents = async () => {
     try {
-      setLoading(true); // Show loader
+      setLoading(true);
       const response = await fetch(
         'https://placement-backend-navy.vercel.app/api/students',
       );
-      const text = await response.text();
-      console.log('Raw response:', text); // Log raw response
-      const data = JSON.parse(text);
+      const data = await response.json();
       setStudentsData(data);
     } catch (error) {
       console.error('Error fetching students:', error);
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
+    }
+  };
+
+  const handleSelectStudent = async studentId => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://placement-backend-navy.vercel.app/api/selectStudent/${studentId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      Alert.alert('Success', 'Student selection added successfully');
+      setStudentsData(prevStudents =>
+        prevStudents.filter(student => student._id !== studentId),
+      );
+    } catch (error) {
+      console.error('Error selecting student:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAddStudent = async () => {
     try {
-      setLoading(true); // Show loader
+      setLoading(true);
       const response = await fetch(
         'https://placement-backend-navy.vercel.app/api/students',
         {
@@ -72,8 +96,13 @@ const AdminStudents = () => {
     } catch (error) {
       console.error('Error adding student:', error);
     } finally {
-      setLoading(false); // Hide loader
+      setLoading(false);
     }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchStudents().finally(() => setRefreshing(false));
   };
 
   return (
@@ -86,59 +115,52 @@ const AdminStudents = () => {
           <Text style={styles.addButtonText}>Add New</Text>
         </TouchableOpacity>
 
-        <ScrollView contentContainerStyle={styles.studentsContainer}>
+        <ScrollView
+          contentContainerStyle={styles.studentsContainer}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           {studentsData.map(student => (
             <View key={student._id} style={styles.card}>
-              <View style={styles.row}>
-                <View style={styles.column}>
-                  <Text style={styles.label}>ID:</Text>
-                  <Text>{student._id}</Text>
-                </View>
-                <View style={styles.column}>
-                  <Text style={styles.label}>Name:</Text>
-                  <Text>{student.name}</Text>
-                </View>
-                <View style={styles.column}>
-                  <Text style={styles.label}>Address:</Text>
-                  <Text>{student.address}</Text>
-                </View>
+              <Text
+                onPress={() => handleSelectStudent(student._id)}
+                style={{
+                  color: 'green',
+                  fontWeight: 'bold',
+                  textAlign: 'right',
+                  fontSize: 16,
+                  padding: 10,
+                }}>
+                Mark as selected
+              </Text>
+
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoLabel}>ID:</Text>
+                <Text style={styles.infoText}>{student._id}</Text>
               </View>
-              <View style={styles.row}>
-                <View style={styles.column}>
-                  <Text style={styles.label}>Gender:</Text>
-                  <Text>{student.gender}</Text>
-                </View>
-                <View style={styles.column}>
-                  <Text style={styles.label}>DOB:</Text>
-                  <Text>{student.dob}</Text>
-                </View>
-                <View style={styles.column}>
-                  <Text style={styles.label}>Phone:</Text>
-                  <Text>{student.phone}</Text>
-                </View>
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoLabel}>Name:</Text>
+                <Text style={styles.infoText}>{student.name}</Text>
               </View>
-              <View style={styles.row}>
-                <View style={styles.column}>
-                  <Text style={styles.label}>Branch:</Text>
-                  <Text>{student.branch}</Text>
-                </View>
-                <View style={styles.actionButtons}>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.viewButton]}
-                    onPress={() => handleView(student)}>
-                    <Text style={styles.actionButtonText}>View</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.editButton]}
-                    onPress={() => handleEdit(student)}>
-                    <Text style={styles.actionButtonText}>Edit</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.deleteButton]}
-                    onPress={() => handleDelete(student)}>
-                    <Text style={styles.actionButtonText}>Delete</Text>
-                  </TouchableOpacity>
-                </View>
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoLabel}>Address:</Text>
+                <Text style={styles.infoText}>{student.address}</Text>
+              </View>
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoLabel}>Gender:</Text>
+                <Text style={styles.infoText}>{student.gender}</Text>
+              </View>
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoLabel}>DOB:</Text>
+                <Text style={styles.infoText}>{student.dob}</Text>
+              </View>
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoLabel}>Phone:</Text>
+                <Text style={styles.infoText}>{student.phone}</Text>
+              </View>
+              <View style={styles.infoContainer}>
+                <Text style={styles.infoLabel}>Branch:</Text>
+                <Text style={styles.infoText}>{student.branch}</Text>
               </View>
             </View>
           ))}
@@ -150,7 +172,6 @@ const AdminStudents = () => {
           </View>
         )}
 
-        {/* Modal for adding new student */}
         <Modal
           animationType="slide"
           transparent={false}
@@ -158,7 +179,6 @@ const AdminStudents = () => {
           onRequestClose={() => setModalVisible(false)}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              {/* Inputs for new student */}
               <TextInput
                 style={styles.input}
                 placeholder="Name"
@@ -205,7 +225,6 @@ const AdminStudents = () => {
                   setNewStudent({...newStudent, branch: text})
                 }
               />
-              {/* Add Student Button */}
               <TouchableOpacity
                 style={styles.addStudentButton}
                 onPress={handleAddStudent}>
@@ -251,45 +270,18 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3,
   },
-  row: {
+  infoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  column: {
-    flex: 1,
-    marginRight: 10,
-  },
-  label: {
+  infoLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  actionButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
-    marginLeft: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  viewButton: {
-    backgroundColor: '#2196F3',
-  },
-  editButton: {
-    backgroundColor: '#FF9800',
-  },
-  deleteButton: {
-    backgroundColor: '#F44336',
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 12,
     fontWeight: 'bold',
+  },
+  infoText: {
+    fontSize: 14,
   },
   modalContainer: {
     flex: 1,

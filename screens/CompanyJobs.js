@@ -1,167 +1,165 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Header from '../components/Header';
 
 const CompanyJobs = () => {
-  const jobOpenings = [
-    {
-      id: 1,
-      companyName: 'ABC Inc.',
-      designation: 'Software Engineer',
-      twelfthPercentage: '85%',
-      graduationGPA: '3.8',
-      salaryPackage: '80LPA',
-    },
-    {
-      id: 2,
-      companyName: 'XYZ Corp.',
-      designation: 'Web Developer',
-      twelfthPercentage: '80%',
-      graduationGPA: '3.5',
-      salaryPackage: '70LPA',
-    },
-    {
-      id: 3,
-      companyName: 'PQR Ltd.',
-      designation: 'Data Analyst',
-      twelfthPercentage: '88%',
-      graduationGPA: '3.9',
-      salaryPackage: '75LPA',
-    },
-    {
-      id: 4,
-      companyName: 'MNO Solutions',
-      designation: 'UX Designer',
-      twelfthPercentage: '82%',
-      graduationGPA: '3.7',
-      salaryPackage: '85LPA',
-    },
-    {
-      id: 5,
-      companyName: 'EFG Technologies',
-      designation: 'Network Engineer',
-      twelfthPercentage: '86%',
-      graduationGPA: '3.6',
-      salaryPackage: '90LPA',
-    },
-    {
-      id: 6,
-      companyName: 'LMN Innovations',
-      designation: 'Business Analyst',
-      twelfthPercentage: '84%',
-      graduationGPA: '3.8',
-      salaryPackage: '78LPA',
-    },
-    {
-      id: 7,
-      companyName: 'GHI Enterprises',
-      designation: 'Mobile App Developer',
-      twelfthPercentage: '81%',
-      graduationGPA: '3.6',
-      salaryPackage: '82LPA',
-    },
-    {
-      id: 8,
-      companyName: 'JKL Systems',
-      designation: 'Systems Engineer',
-      twelfthPercentage: '87%',
-      graduationGPA: '3.9',
-      salaryPackage: '95LPA',
-    },
-    {
-      id: 9,
-      companyName: 'RST Solutions',
-      designation: 'UI Designer',
-      twelfthPercentage: '83%',
-      graduationGPA: '3.7',
-      salaryPackage: '88LPA',
-    },
-    {
-      id: 10,
-      companyName: 'UVW Tech',
-      designation: 'Quality Assurance Tester',
-      twelfthPercentage: '85%',
-      graduationGPA: '3.8',
-      salaryPackage: '72LPA',
-    },
-  ];
+  const [designation, setDesignation] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [twelfthPercentage, setTwelfthPercentage] = useState('');
+  const [graduationGPA, setGraduationGPA] = useState('');
+  const [salaryPackage, setSalaryPackage] = useState('');
+  const [jobAdded, setJobAdded] = useState(false); // State to track job added
+  const [errorText, setErrorText] = useState('');
+
+  const handleAddJob = () => {
+    // Check if any field is empty
+    if (
+      !designation ||
+      !companyName ||
+      !twelfthPercentage ||
+      !graduationGPA ||
+      !salaryPackage
+    ) {
+      setErrorText('Please fill out all details.');
+      return;
+    }
+
+    const newJob = {
+      designation,
+      companyName,
+      twelfthPercentage: parseFloat(twelfthPercentage),
+      graduationGPA: parseFloat(graduationGPA),
+      salaryPackage: parseFloat(salaryPackage),
+    };
+
+    fetch('https://placement-backend-navy.vercel.app/api/jobs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newJob),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Job added successfully:', data);
+        setJobAdded(true); // Set jobAdded state to true upon successful addition
+        setErrorText(''); // Clear error message
+        setDesignation(''); // Clear input fields
+        setCompanyName('');
+        setTwelfthPercentage('');
+        setGraduationGPA('');
+        setSalaryPackage('');
+
+        // Show alert for successful job addition
+        Alert.alert('Success', 'Job added successfully!');
+      })
+      .catch(error => console.error('Error adding job:', error));
+  };
 
   return (
     <>
-    <Header title={'Job Openings'}/>
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.openingsContainer}>
-        {jobOpenings.map((job) => (
-          <View key={job.id} style={styles.card}>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Text style={styles.label}>ID:</Text>
-                <Text>{job.id}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Company Name:</Text>
-                <Text>{job.companyName}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Designation:</Text>
-                <Text>{job.designation}</Text>
-              </View>
-            </View>
-            <View style={styles.row}>
-              <View style={styles.column}>
-                <Text style={styles.label}>12th Percentage:</Text>
-                <Text>{job.twelfthPercentage}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Graduation GPA:</Text>
-                <Text>{job.graduationGPA}</Text>
-              </View>
-              <View style={styles.column}>
-                <Text style={styles.label}>Salary Package:</Text>
-                <Text>{job.salaryPackage} LPA</Text>
-              </View>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+      <Header title={'Add a Job'} />
+      <View style={styles.container}>
+        <Text style={styles.label}>Designation:</Text>
+        <TextInput
+          style={styles.input}
+          value={designation}
+          onChangeText={text => setDesignation(text)}
+          placeholder="Enter designation"
+        />
+        <Text style={styles.label}>Company Name:</Text>
+        <TextInput
+          style={styles.input}
+          value={companyName}
+          onChangeText={text => setCompanyName(text)}
+          placeholder="Enter company name"
+        />
+        <Text style={styles.label}>12th Percentage:</Text>
+        <TextInput
+          style={styles.input}
+          value={twelfthPercentage}
+          onChangeText={text => setTwelfthPercentage(text)}
+          keyboardType="numeric"
+          placeholder="Enter percentage"
+        />
+        <Text style={styles.label}>Graduation GPA:</Text>
+        <TextInput
+          style={styles.input}
+          value={graduationGPA}
+          onChangeText={text => setGraduationGPA(text)}
+          keyboardType="numeric"
+          placeholder="Enter GPA"
+        />
+        <Text style={styles.label}>Salary Package:</Text>
+        <TextInput
+          style={styles.input}
+          value={salaryPackage}
+          onChangeText={text => setSalaryPackage(text)}
+          keyboardType="numeric"
+          placeholder="Enter salary package"
+        />
+        <TouchableOpacity style={styles.button} onPress={handleAddJob}>
+          <Text style={styles.buttonText}>Add Job</Text>
+        </TouchableOpacity>
+
+        {/* Error message for incomplete details */}
+        {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
+
+        {/* Conditional rendering of success message */}
+        {jobAdded && (
+          <Text style={styles.successText}>Job added successfully!</Text>
+        )}
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-    padding: 16,
-  },
-  openingsContainer: {
-    flexGrow: 1,
-  },
-  card: {
-    backgroundColor: '#fff',
-    marginBottom: 10,
-    borderRadius: 10,
-    padding: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  column: {
-    flex: 1,
-    marginRight: 10,
+    padding: 20,
   },
   label: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 4,
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    marginTop: 10,
+    alignSelf: 'center',
+  },
+  successText: {
+    color: 'green',
+    fontSize: 16,
+    marginTop: 10,
+    alignSelf: 'center',
   },
 });
 

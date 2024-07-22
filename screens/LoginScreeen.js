@@ -1,26 +1,46 @@
-import React, { useState, useContext } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, TextInput, Menu, Provider, Title, Text } from 'react-native-paper';
-import { AuthContext } from '../AuthContext';
+import React, {useState, useContext} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {
+  Button,
+  TextInput,
+  Menu,
+  Provider,
+  Title,
+  Text,
+} from 'react-native-paper';
+import {AuthContext} from '../AuthContext';
 
 const roles = ['admin', 'hod', 'student', 'company'];
 
+const roleCredentials = {
+  admin: {userId: 'admin@gmail.com', password: 'admin@123'},
+  hod: {userId: 'hod@gmail.com', password: 'hod@123'},
+  student: {userId: 'student@gmail.com', password: 'student@123'},
+  company: {userId: 'company@gmail.com', password: 'company@123'},
+};
+
 const LoginScreen = () => {
-  const { setUserRole } = useContext(AuthContext);
+  const {setUserRole} = useContext(AuthContext);
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState(null); // Initialize with null
+  const [role, setRole] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = () => {
-    // Check if role is selected
-    if (role) {
-      // Add actual login logic here
-      setUserRole(role);
-    } else {
-      // Handle case where role is not selected
-      alert('Please select a role before logging in.');
+    if (!userId || !password || !role) {
+      setErrorMessage('Please fill all details.');
+      return;
     }
+
+    const credentials = roleCredentials[role];
+    if (userId !== credentials.userId || password !== credentials.password) {
+      setErrorMessage('Invalid credentials.');
+      return;
+    }
+
+    setUserRole(role);
+    setErrorMessage('');
   };
 
   return (
@@ -28,8 +48,11 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <Title style={styles.title}>Welcome To College Placement System</Title>
         <Title style={styles.title2}>Training & Placement Cell</Title>
-        <View style={{ flex: 1, justifyContent: 'center' }}>
+        <View style={{flex: 1, justifyContent: 'center'}}>
           <Text style={styles.subTitle}>Login</Text>
+          {errorMessage ? (
+            <Text style={styles.error}>{errorMessage}</Text>
+          ) : null}
           <TextInput
             label="User ID"
             value={userId}
@@ -52,10 +75,21 @@ const LoginScreen = () => {
               </Button>
             }>
             {roles.map(r => (
-              <Menu.Item key={r} onPress={() => { setRole(r); setMenuVisible(false); }} title={r} />
+              <Menu.Item
+                key={r}
+                onPress={() => {
+                  setRole(r);
+                  setMenuVisible(false);
+                }}
+                title={r}
+              />
             ))}
           </Menu>
-          <Button mode="contained" onPress={handleLogin} style={styles.button} disabled={!role}>
+          <Button
+            mode="contained"
+            onPress={handleLogin}
+            style={styles.button}
+            disabled={!role}>
             Login
           </Button>
         </View>
@@ -93,6 +127,11 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 16,
+  },
+  error: {
+    color: 'red',
+    marginBottom: 16,
+    textAlign: 'center',
   },
 });
 
