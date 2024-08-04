@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {
   Button,
@@ -9,23 +9,39 @@ import {
   Text,
 } from 'react-native-paper';
 import {AuthContext} from '../AuthContext';
+import axios from 'axios';
 
 const roles = ['admin', 'hod', 'student', 'company'];
 
 const roleCredentials = {
   admin: {userId: 'admin@gmail.com', password: 'admin@123'},
   hod: {userId: 'hod@gmail.com', password: 'hod@123'},
-  student: {userId: 'student@gmail.com', password: 'student@123'},
   company: {userId: 'company@gmail.com', password: 'company@123'},
 };
 
 const LoginScreen = () => {
-  const {setUserRole} = useContext(AuthContext);
+  const {setUserRole, setUserData} = useContext(AuthContext);
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get(
+          'https://npb-lyart.vercel.app/api/students',
+        );
+        setStudents(response.data);
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      }
+    };
+
+    fetchStudents();
+  }, []);
 
   const handleLogin = () => {
     if (!userId || !password || !role) {
@@ -33,13 +49,25 @@ const LoginScreen = () => {
       return;
     }
 
-    const credentials = roleCredentials[role];
-    if (userId !== credentials.userId || password !== credentials.password) {
-      setErrorMessage('Invalid credentials.');
-      return;
+    if (role === 'student') {
+      const student = students.find(
+        student => student.email === userId && student.password === password,
+      );
+      if (!student) {
+        setErrorMessage('Invalid credentials.');
+        return;
+      }
+      setUserRole(role);
+      setUserData(student);
+    } else {
+      const credentials = roleCredentials[role];
+      if (userId !== credentials.userId || password !== credentials.password) {
+        setErrorMessage('Invalid credentials.');
+        return;
+      }
+      setUserRole(role);
+      setUserData({userId, role});
     }
-
-    setUserRole(role);
     setErrorMessage('');
   };
 
