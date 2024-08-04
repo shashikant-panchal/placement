@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
   View,
   FlatList,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import axios from 'axios';
 import Header from '../components/Header';
@@ -12,6 +13,7 @@ import Header from '../components/Header';
 const AdminSelectedStudents = () => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchSelectedStudents();
@@ -27,8 +29,14 @@ const AdminSelectedStudents = () => {
       console.error('Error fetching selected students:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchSelectedStudents();
+  }, []);
 
   if (loading) {
     return (
@@ -72,6 +80,9 @@ const AdminSelectedStudents = () => {
         renderItem={renderItem}
         keyExtractor={item => item._id}
         contentContainerStyle={styles.studentsContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
       />
     </View>
   );
