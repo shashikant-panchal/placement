@@ -6,6 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
+import axios from 'axios';
 import Header from '../components/Header';
 
 const AdminSelectedStudents = () => {
@@ -18,11 +19,10 @@ const AdminSelectedStudents = () => {
 
   const fetchSelectedStudents = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         'https://npb-lyart.vercel.app/api/selectedStudents',
       );
-      const data = await response.json();
-      setSelectedStudents(data);
+      setSelectedStudents(response.data);
     } catch (error) {
       console.error('Error fetching selected students:', error);
     } finally {

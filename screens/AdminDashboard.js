@@ -9,6 +9,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 import Header from '../components/Header';
 
 const AdminDashboard = () => {
@@ -30,39 +31,25 @@ const AdminDashboard = () => {
 
       const [studentsRes, hodsRes, companiesRes, selectedStudentsRes] =
         await Promise.all([
-          fetch(
+          axios.get(
             'https://placement-backend-shashikantpanchals-projects.vercel.app/api/students',
           ),
-          fetch(
+          axios.get(
             'https://placement-backend-shashikantpanchals-projects.vercel.app/api/hods',
           ),
-          fetch(
+          axios.get(
             'https://placement-backend-shashikantpanchals-projects.vercel.app/api/companies',
           ),
-          fetch(
+          axios.get(
             'https://placement-backend-shashikantpanchals-projects.vercel.app/api/selectedStudents',
           ),
         ]);
 
-      if (
-        !studentsRes.ok ||
-        !hodsRes.ok ||
-        !companiesRes.ok ||
-        !selectedStudentsRes.ok
-      ) {
-        throw new Error('Failed to fetch data');
-      }
-
-      const studentsData = await studentsRes.json();
-      const hodsData = await hodsRes.json();
-      const companiesData = await companiesRes.json();
-      const selectedStudentsData = await selectedStudentsRes.json();
-
       setData({
-        studentsNumber: studentsData.length,
-        hodsNumber: hodsData.length,
-        companiesNumber: companiesData.length,
-        selectedStudents: selectedStudentsData,
+        studentsNumber: studentsRes.data.length,
+        hodsNumber: hodsRes.data.length,
+        companiesNumber: companiesRes.data.length,
+        selectedStudents: selectedStudentsRes.data,
       });
     } catch (error) {
       console.error('Network request failed:', error.message);

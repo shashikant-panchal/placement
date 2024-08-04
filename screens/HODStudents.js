@@ -9,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
+import axios from 'axios';
 import Header from '../components/Header';
 
 const HODStudents = () => {
@@ -31,9 +32,10 @@ const HODStudents = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true); // Show loader
-      const response = await fetch('https://npb-lyart.vercel.app/api/students');
-      const data = await response.json();
-      setStudentsData(data);
+      const response = await axios.get(
+        'https://npb-lyart.vercel.app/api/students',
+      );
+      setStudentsData(response.data);
     } catch (error) {
       console.error('Error fetching students:', error);
     } finally {
@@ -44,18 +46,16 @@ const HODStudents = () => {
   const handleAddStudent = async () => {
     try {
       setLoading(true); // Show loader
-      const response = await fetch(
+      const response = await axios.post(
         'https://npb-lyart.vercel.app/api/students',
+        newStudent,
         {
-          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(newStudent),
         },
       );
-      const data = await response.json();
-      setStudentsData([...studentsData, data]);
+      setStudentsData([...studentsData, response.data]);
       setModalVisible(false);
       setNewStudent({
         name: '',
@@ -118,23 +118,6 @@ const HODStudents = () => {
                   <Text style={styles.label}>Branch:</Text>
                   <Text>{student.branch}</Text>
                 </View>
-                {/* <View style={styles.actionButtons}>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.viewButton]}
-                    onPress={() => handleView(student)}>
-                    <Text style={styles.actionButtonText}>View</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.editButton]}
-                    onPress={() => handleEdit(student)}>
-                    <Text style={styles.actionButtonText}>Edit</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.deleteButton]}
-                    onPress={() => handleDelete(student)}>
-                    <Text style={styles.actionButtonText}>Delete</Text>
-                  </TouchableOpacity>
-                </View> */}
               </View>
             </View>
           ))}
@@ -145,8 +128,6 @@ const HODStudents = () => {
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         )}
-
-        {/* Modal for adding new student */}
         <Modal
           animationType="slide"
           transparent={false}
@@ -260,32 +241,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginBottom: 4,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  actionButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
-    marginLeft: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  viewButton: {
-    backgroundColor: '#2196F3',
-  },
-  editButton: {
-    backgroundColor: '#FF9800',
-  },
-  deleteButton: {
-    backgroundColor: '#F44336',
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   modalContainer: {
     flex: 1,

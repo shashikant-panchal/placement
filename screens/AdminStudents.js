@@ -11,6 +11,7 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
+import axios from 'axios';
 import Header from '../components/Header';
 
 const AdminStudents = () => {
@@ -34,9 +35,10 @@ const AdminStudents = () => {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://npb-lyart.vercel.app/api/students');
-      const data = await response.json();
-      setStudentsData(data);
+      const response = await axios.get(
+        'https://npb-lyart.vercel.app/api/students',
+      );
+      setStudentsData(response.data);
     } catch (error) {
       console.error('Error fetching students:', error);
     } finally {
@@ -47,10 +49,10 @@ const AdminStudents = () => {
   const handleSelectStudent = async studentId => {
     try {
       setLoading(true);
-      const response = await fetch(
+      await axios.post(
         `https://npb-lyart.vercel.app/api/selectStudent/${studentId}`,
+        {},
         {
-          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -70,18 +72,16 @@ const AdminStudents = () => {
   const handleAddStudent = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
+      const response = await axios.post(
         'https://npb-lyart.vercel.app/api/students',
+        newStudent,
         {
-          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(newStudent),
         },
       );
-      const data = await response.json();
-      setStudentsData([...studentsData, data]);
+      setStudentsData([...studentsData, response.data]);
       setModalVisible(false);
       setNewStudent({
         name: '',

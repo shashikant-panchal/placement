@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native';
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Header from '../components/Header';
 
 const StudentUploadInfo = () => {
@@ -11,10 +18,8 @@ const StudentUploadInfo = () => {
   const [graduationGPA, setGraduationGPA] = useState('');
 
   const handleSubmit = () => {
-    // Here you can perform any submission logic, e.g., send data to server
-    // For demonstration, just showing an alert
     Alert.alert('Success', 'Student information added successfully!', [
-      { text: 'OK', onPress: clearFields }
+      {text: 'OK', onPress: clearFields},
     ]);
   };
 
@@ -29,57 +34,57 @@ const StudentUploadInfo = () => {
 
   return (
     <>
-    <Header title={'Upload Info'} />
-    <View style={styles.container}>
-      <Text style={styles.heading}>Upload Student Info</Text>
+      <Header title={'Upload Info'} />
+      <View style={styles.container}>
+        <Text style={styles.heading}>Upload Student Info</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="10th Pass Year"
-        value={tenthPassYear}
-        onChangeText={text => setTenthPassYear(text)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="10th Percentage"
-        value={tenthPercentage}
-        onChangeText={text => setTenthPercentage(text)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="12th Pass Year"
-        value={twelfthPassYear}
-        onChangeText={text => setTwelfthPassYear(text)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="12th Percentage"
-        value={twelfthPercentage}
-        onChangeText={text => setTwelfthPercentage(text)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Graduation Year"
-        value={graduationYear}
-        onChangeText={text => setGraduationYear(text)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Graduation GPA"
-        value={graduationGPA}
-        onChangeText={text => setGraduationGPA(text)}
-        keyboardType="numeric"
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="10th Pass Year"
+          value={tenthPassYear}
+          onChangeText={text => setTenthPassYear(text)}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="10th Percentage"
+          value={tenthPercentage}
+          onChangeText={text => setTenthPercentage(text)}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="12th Pass Year"
+          value={twelfthPassYear}
+          onChangeText={text => setTwelfthPassYear(text)}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="12th Percentage"
+          value={twelfthPercentage}
+          onChangeText={text => setTwelfthPercentage(text)}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Graduation Year"
+          value={graduationYear}
+          onChangeText={text => setGraduationYear(text)}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Graduation GPA"
+          value={graduationGPA}
+          onChangeText={text => setGraduationGPA(text)}
+          keyboardType="numeric"
+        />
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitText}>Submit</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitText}>Submit</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 };

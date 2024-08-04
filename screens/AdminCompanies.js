@@ -10,6 +10,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import axios from 'axios';
 import Header from '../components/Header';
 
 const AdminCompanies = () => {
@@ -31,11 +32,10 @@ const AdminCompanies = () => {
   const fetchCompanies = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
+      const response = await axios.get(
         'https://npb-lyart.vercel.app/api/companies',
       );
-      const data = await response.json();
-      setCompaniesData(data);
+      setCompaniesData(response.data);
     } catch (error) {
       console.error('Error fetching companies:', error);
     } finally {
@@ -46,18 +46,16 @@ const AdminCompanies = () => {
   const handleAddCompany = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
+      const response = await axios.post(
         'https://npb-lyart.vercel.app/api/companies',
+        newCompany,
         {
-          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(newCompany),
         },
       );
-      const data = await response.json();
-      setCompaniesData([...companiesData, data]);
+      setCompaniesData([...companiesData, response.data]);
       setModalVisible(false);
       setNewCompany({
         companyName: '',
@@ -77,9 +75,7 @@ const AdminCompanies = () => {
   const handleDeleteCompany = async id => {
     try {
       setLoading(true);
-      await fetch(`http://192.168.1.45:5000/api/companies/${id}`, {
-        method: 'DELETE',
-      });
+      await axios.delete(`https://npb-lyart.vercel.app/api/companies/${id}`);
       setCompaniesData(companiesData.filter(company => company._id !== id));
     } catch (error) {
       console.error('Error deleting company:', error);

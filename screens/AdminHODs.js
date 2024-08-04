@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 import {
   StyleSheet,
   Text,
@@ -32,9 +33,8 @@ const AdminHODs = () => {
   const fetchHODs = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://npb-lyart.vercel.app/api/hods');
-      const data = await response.json();
-      setHODsData(data);
+      const response = await axios.get('https://npb-lyart.vercel.app/api/hods');
+      setHODsData(response.data);
     } catch (error) {
       console.error('Error fetching HODs:', error);
     } finally {
@@ -45,15 +45,16 @@ const AdminHODs = () => {
   const handleAddHOD = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://npb-lyart.vercel.app/api/hods', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        'https://npb-lyart.vercel.app/api/hods',
+        newHOD,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-        body: JSON.stringify(newHOD),
-      });
-      const data = await response.json();
-      setHODsData([...hodsData, data]);
+      );
+      setHODsData([...hodsData, response.data]);
       setModalVisible(false);
       setNewHOD({
         name: '',
@@ -74,9 +75,7 @@ const AdminHODs = () => {
   const handleDeleteHOD = async id => {
     try {
       setLoading(true);
-      await fetch(`http://192.168.1.45:5000/api/hods/${id}`, {
-        method: 'DELETE',
-      });
+      await axios.delete(`http://192.168.1.45:5000/api/hods/${id}`);
       setHODsData(hodsData.filter(hod => hod._id !== id));
     } catch (error) {
       console.error('Error deleting HOD:', error);

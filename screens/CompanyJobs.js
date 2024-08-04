@@ -3,11 +3,11 @@ import {
   View,
   Text,
   TextInput,
-  Button,
-  StyleSheet,
   TouchableOpacity,
   Alert,
+  StyleSheet,
 } from 'react-native';
+import axios from 'axios';
 import Header from '../components/Header';
 
 const CompanyJobs = () => {
@@ -16,11 +16,10 @@ const CompanyJobs = () => {
   const [twelfthPercentage, setTwelfthPercentage] = useState('');
   const [graduationGPA, setGraduationGPA] = useState('');
   const [salaryPackage, setSalaryPackage] = useState('');
-  const [jobAdded, setJobAdded] = useState(false); // State to track job added
+  const [jobAdded, setJobAdded] = useState(false);
   const [errorText, setErrorText] = useState('');
 
-  const handleAddJob = () => {
-    // Check if any field is empty
+  const handleAddJob = async () => {
     if (
       !designation ||
       !companyName ||
@@ -40,28 +39,30 @@ const CompanyJobs = () => {
       salaryPackage: parseFloat(salaryPackage),
     };
 
-    fetch('https://npb-lyart.vercel.app/api/jobs', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newJob),
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Job added successfully:', data);
-        setJobAdded(true); // Set jobAdded state to true upon successful addition
-        setErrorText(''); // Clear error message
-        setDesignation(''); // Clear input fields
-        setCompanyName('');
-        setTwelfthPercentage('');
-        setGraduationGPA('');
-        setSalaryPackage('');
+    try {
+      const response = await axios.post(
+        'https://npb-lyart.vercel.app/api/jobs',
+        newJob,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      console.log('Job added successfully:', response.data);
+      setJobAdded(true);
+      setErrorText('');
+      setDesignation('');
+      setCompanyName('');
+      setTwelfthPercentage('');
+      setGraduationGPA('');
+      setSalaryPackage('');
 
-        // Show alert for successful job addition
-        Alert.alert('Success', 'Job added successfully!');
-      })
-      .catch(error => console.error('Error adding job:', error));
+      Alert.alert('Success', 'Job added successfully!');
+    } catch (error) {
+      console.error('Error adding job:', error);
+      Alert.alert('Error', 'Failed to add job. Please try again.');
+    }
   };
 
   return (
@@ -110,10 +111,7 @@ const CompanyJobs = () => {
           <Text style={styles.buttonText}>Add Job</Text>
         </TouchableOpacity>
 
-        {/* Error message for incomplete details */}
         {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
-
-        {/* Conditional rendering of success message */}
         {jobAdded && (
           <Text style={styles.successText}>Job added successfully!</Text>
         )}

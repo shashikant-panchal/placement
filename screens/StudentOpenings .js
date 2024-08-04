@@ -6,6 +6,7 @@ import {
   StyleSheet,
   RefreshControl,
 } from 'react-native';
+import axios from 'axios';
 import JobCard from '../components/JobCard';
 import Header from '../components/Header';
 
@@ -20,12 +21,11 @@ const StudentOpenings = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('https://npb-lyart.vercel.app/api/jobs');
-      const data = await response.json();
-      setJobs(data);
-      setLoading(false);
+      const response = await axios.get('https://npb-lyart.vercel.app/api/jobs');
+      setJobs(response.data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
+    } finally {
       setLoading(false);
     }
   };
