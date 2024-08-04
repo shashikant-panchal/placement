@@ -25,6 +25,8 @@ const AdminStudents = () => {
     dob: '',
     phone: '',
     branch: '',
+    email: '',
+    password: '',
   });
   const [refreshing, setRefreshing] = useState(false);
 
@@ -90,6 +92,8 @@ const AdminStudents = () => {
         dob: '',
         phone: '',
         branch: '',
+        email: '',
+        password: '',
       });
     } catch (error) {
       console.error('Error adding student:', error);
@@ -222,6 +226,23 @@ const AdminStudents = () => {
                 onChangeText={text =>
                   setNewStudent({...newStudent, branch: text})
                 }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={newStudent.email}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, email: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={newStudent.password}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, password: text})
+                }
+                secureTextEntry
               />
               <TouchableOpacity
                 style={styles.addStudentButton}
