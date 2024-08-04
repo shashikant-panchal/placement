@@ -31,18 +31,10 @@ const AdminDashboard = () => {
 
       const [studentsRes, hodsRes, companiesRes, selectedStudentsRes] =
         await Promise.all([
-          axios.get(
-            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/students',
-          ),
-          axios.get(
-            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/hods',
-          ),
-          axios.get(
-            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/companies',
-          ),
-          axios.get(
-            'https://placement-backend-shashikantpanchals-projects.vercel.app/api/selectedStudents',
-          ),
+          axios.get('https://npb-lyart.vercel.app/api/students'),
+          axios.get('https://npb-lyart.vercel.app/api/hods'),
+          axios.get('https://npb-lyart.vercel.app/api/companies'),
+          axios.get('https://npb-lyart.vercel.app/api/selectedStudents'),
         ]);
 
       setData({
