@@ -1,39 +1,33 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React, {useContext} from 'react';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import Header from '../components/Header';
-
-const studentData = {
-  name: "John Doe",
-  address: "123 Main St, City, Country",
-  gender: "Male",
-  phone: "+1 234-567-8901",
-  email: "john.doe@example.com"
-};
+import {AuthContext} from '../AuthContext';
 
 const StudentHome = () => {
+  const {userData} = useContext(AuthContext);
 
   return (
     <>
-    <Header title={'Student Home'}/>
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.profileHeading}>Student Profile</Text>
-      <View style={styles.card}>
-        <Text style={styles.label}>Name:</Text>
-        <Text style={styles.text}>{studentData.name}</Text>
+      <Header title={'Student Home'} />
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.profileHeading}>Student Profile</Text>
+        <View style={styles.card}>
+          <Text style={styles.label}>Name:</Text>
+          <Text style={styles.text}>{userData.name}</Text>
 
-        <Text style={styles.label}>Address:</Text>
-        <Text style={styles.text}>{studentData.address}</Text>
+          <Text style={styles.label}>Address:</Text>
+          <Text style={styles.text}>{userData.address}</Text>
 
-        <Text style={styles.label}>Gender:</Text>
-        <Text style={styles.text}>{studentData.gender}</Text>
+          <Text style={styles.label}>Gender:</Text>
+          <Text style={styles.text}>{userData.gender}</Text>
 
-        <Text style={styles.label}>Phone:</Text>
-        <Text style={styles.text}>{studentData.phone}</Text>
+          <Text style={styles.label}>Phone:</Text>
+          <Text style={styles.text}>{userData.phone}</Text>
 
-        <Text style={styles.label}>Email:</Text>
-        <Text style={styles.text}>{studentData.email}</Text>
-      </View>
-    </ScrollView>
+          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.text}>{userData.email}</Text>
+        </View>
+      </ScrollView>
     </>
   );
 };
@@ -58,7 +52,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
