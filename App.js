@@ -25,6 +25,8 @@ import CompanyJobs from './screens/CompanyJobs';
 import CompanyApplications from './screens/CompanyApplications';
 import ProfileScreen from './screens/ProfileScreen';
 import SignUpScreen from './screens/SignUpScreen';
+import CompanyNotofications from './screens/CompanyNotofications';
+import StudentNotifications from './screens/StudentNotifications';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -193,7 +195,7 @@ const StudentTabs = () => (
         ),
       }}
     />
-    <Tab.Screen
+    {/* <Tab.Screen
       name="StudentUploadInfo"
       component={StudentUploadInfo}
       options={{
@@ -202,7 +204,7 @@ const StudentTabs = () => (
           <Ionicons name="cloud-upload" color={color} size={26} />
         ),
       }}
-    />
+    /> */}
     <Tab.Screen
       name="StudentOpenings"
       component={StudentOpenings}
@@ -213,13 +215,23 @@ const StudentTabs = () => (
         ),
       }}
     />
-    <Tab.Screen
+    {/* <Tab.Screen
       name="StudentAppliedJobs"
       component={StudentAppliedJobs}
       options={{
         tabBarLabel: 'Applied Jobs',
         tabBarIcon: ({color}) => (
           <Ionicons name="document-text" color={color} size={26} />
+        ),
+      }}
+    /> */}
+    <Tab.Screen
+      name="StudentNotifications"
+      component={StudentNotifications}
+      options={{
+        tabBarLabel: 'Notifications',
+        tabBarIcon: ({color}) => (
+          <Ionicons name="notifications" color={color} size={26} />
         ),
       }}
     />
@@ -269,6 +281,16 @@ const CompanyTabs = () => (
         tabBarLabel: 'Applications',
         tabBarIcon: ({color}) => (
           <Ionicons name="document-text" color={color} size={26} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="CompanyNotifications"
+      component={CompanyNotofications}
+      options={{
+        tabBarLabel: 'Notifications',
+        tabBarIcon: ({color}) => (
+          <Ionicons name="notifications" color={color} size={26} />
         ),
       }}
     />
