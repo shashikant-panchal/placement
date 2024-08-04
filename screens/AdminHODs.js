@@ -75,7 +75,7 @@ const AdminHODs = () => {
   const handleDeleteHOD = async id => {
     try {
       setLoading(true);
-      await axios.delete(`http://192.168.1.45:5000/api/hods/${id}`);
+      await axios.delete(`https://npb-lyart.vercel.app/api/hods/${id}`);
       setHODsData(hodsData.filter(hod => hod._id !== id));
     } catch (error) {
       console.error('Error deleting HOD:', error);
