@@ -60,7 +60,7 @@ const AdminStudents = () => {
           },
         },
       );
-      Alert.alert('Success', 'Student selection added successfully');
+      Alert.alert('Success', 'Student placement added successfully');
       setStudentsData(prevStudents =>
         prevStudents.filter(student => student._id !== studentId),
       );
@@ -133,7 +133,7 @@ const AdminStudents = () => {
                   fontSize: 16,
                   padding: 10,
                 }}>
-                Mark as selected
+                Mark as Placed
               </Text>
 
               <View style={styles.infoContainer}>

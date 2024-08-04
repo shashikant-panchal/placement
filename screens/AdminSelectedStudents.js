@@ -74,7 +74,7 @@ const AdminSelectedStudents = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Selected Students" />
+      <Header title="Placed Students" />
       <FlatList
         data={selectedStudents}
         renderItem={renderItem}
