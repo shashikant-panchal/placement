@@ -22,6 +22,7 @@ const AdminCompanies = () => {
     website: '',
     phone: '',
     email: '',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -63,6 +64,7 @@ const AdminCompanies = () => {
         website: '',
         phone: '',
         email: '',
+        password: '',
       });
     } catch (error) {
       console.error('Error adding company:', error);
@@ -193,6 +195,14 @@ const AdminCompanies = () => {
                 value={newCompany.email}
                 onChangeText={text =>
                   setNewCompany({...newCompany, email: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={newCompany.password}
+                onChangeText={text =>
+                  setNewCompany({...newCompany, password: text})
                 }
               />
               {/* Add Company Button */}

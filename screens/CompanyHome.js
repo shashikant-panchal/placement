@@ -1,39 +1,33 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useContext} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import Header from '../components/Header';
+import {AuthContext} from '../AuthContext';
 
 const CompanyHome = () => {
-  // Sample company profile data
-  const companyData = {
-    companyName: 'ABC Inc.',
-    address: '123 Main St, City, Country',
-    website: 'www.abcinc.com',
-    phone: '+1 234-567-8901',
-    email: 'info@abcinc.com',
-  };
+  const {userData} = useContext(AuthContext);
 
   return (
     <>
-    <Header title={'Company Profile'} />
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.profileHeading}>Company Profile</Text>
-        <Text style={styles.label}>Company Name:</Text>
-        <Text style={styles.text}>{companyData.companyName}</Text>
+      <Header title={'Company Profile'} />
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.profileHeading}>Company Profile</Text>
+          <Text style={styles.label}>Company Name:</Text>
+          <Text style={styles.text}>{userData.companyName}</Text>
 
-        <Text style={styles.label}>Address:</Text>
-        <Text style={styles.text}>{companyData.address}</Text>
+          <Text style={styles.label}>Address:</Text>
+          <Text style={styles.text}>{userData.address}</Text>
 
-        <Text style={styles.label}>Website:</Text>
-        <Text style={[styles.text, styles.website]}>{companyData.website}</Text>
+          <Text style={styles.label}>Website:</Text>
+          <Text style={[styles.text, styles.website]}>{userData.website}</Text>
 
-        <Text style={styles.label}>Phone:</Text>
-        <Text style={styles.text}>{companyData.phone}</Text>
+          <Text style={styles.label}>Phone:</Text>
+          <Text style={styles.text}>{userData.phone}</Text>
 
-        <Text style={styles.label}>Email:</Text>
-        <Text style={[styles.text, styles.email]}>{companyData.email}</Text>
+          <Text style={styles.label}>Email:</Text>
+          <Text style={[styles.text, styles.email]}>{userData.email}</Text>
+        </View>
       </View>
-    </View>
     </>
   );
 };
@@ -52,7 +46,7 @@ const styles = StyleSheet.create({
     padding: 70,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,

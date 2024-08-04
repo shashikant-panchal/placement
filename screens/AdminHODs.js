@@ -22,7 +22,9 @@ const AdminHODs = () => {
     gender: '',
     department: '',
     phone: '',
+    branch: '',
     email: '',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
 
@@ -62,7 +64,9 @@ const AdminHODs = () => {
         gender: '',
         department: '',
         phone: '',
+        branch: '',
         email: '',
+        password: '',
       });
     } catch (error) {
       console.error('Error adding HOD:', error);
@@ -191,9 +195,21 @@ const AdminHODs = () => {
               />
               <TextInput
                 style={styles.input}
+                placeholder="Branch"
+                value={newHOD.branch}
+                onChangeText={text => setNewHOD({...newHOD, branch: text})}
+              />
+              <TextInput
+                style={styles.input}
                 placeholder="Email"
                 value={newHOD.email}
                 onChangeText={text => setNewHOD({...newHOD, email: text})}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={newHOD.password}
+                onChangeText={text => setNewHOD({...newHOD, password: text})}
               />
               {/* Add HOD Button */}
               <TouchableOpacity

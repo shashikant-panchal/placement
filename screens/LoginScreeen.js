@@ -15,8 +15,6 @@ const roles = ['admin', 'hod', 'student', 'company'];
 
 const roleCredentials = {
   admin: {userId: 'admin@gmail.com', password: 'admin@123'},
-  hod: {userId: 'hod@gmail.com', password: 'hod@123'},
-  company: {userId: 'company@gmail.com', password: 'company@123'},
 };
 
 const LoginScreen = () => {
@@ -27,20 +25,27 @@ const LoginScreen = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [students, setStudents] = useState([]);
+  const [hods, setHods] = useState([]);
+  const [companies, setCompanies] = useState([]);
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
-          'https://npb-lyart.vercel.app/api/students',
-        );
-        setStudents(response.data);
+        const [studentsResponse, hodsResponse, companiesResponse] =
+          await Promise.all([
+            axios.get('https://npb-lyart.vercel.app/api/students'),
+            axios.get('https://npb-lyart.vercel.app/api/hods'),
+            axios.get('https://npb-lyart.vercel.app/api/companies'),
+          ]);
+        setStudents(studentsResponse.data);
+        setHods(hodsResponse.data);
+        setCompanies(companiesResponse.data);
       } catch (error) {
-        console.error('Error fetching students:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchStudents();
+    fetchData();
   }, []);
 
   const handleLogin = () => {
@@ -59,6 +64,26 @@ const LoginScreen = () => {
       }
       setUserRole(role);
       setUserData(student);
+    } else if (role === 'hod') {
+      const hod = hods.find(
+        hod => hod.email === userId && hod.password === password,
+      );
+      if (!hod) {
+        setErrorMessage('Invalid credentials.');
+        return;
+      }
+      setUserRole(role);
+      setUserData(hod);
+    } else if (role === 'company') {
+      const company = companies.find(
+        company => company.email === userId && company.password === password,
+      );
+      if (!company) {
+        setErrorMessage('Invalid credentials.');
+        return;
+      }
+      setUserRole(role);
+      setUserData(company);
     } else {
       const credentials = roleCredentials[role];
       if (userId !== credentials.userId || password !== credentials.password) {
