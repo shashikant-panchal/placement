@@ -34,6 +34,7 @@ const Stack = createStackNavigator();
 const AdminStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="Dashboard" component={AdminDashboard} />
+    <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="Students" component={AdminStudents} />
     <Stack.Screen name="HODs" component={AdminHODs} />
     <Stack.Screen name="Companies" component={AdminCompanies} />
