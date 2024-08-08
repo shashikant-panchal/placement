@@ -27,6 +27,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import CompanyNotofications from './screens/CompanyNotofications';
 import StudentNotifications from './screens/StudentNotifications';
+import ApplyJob from './screens/ApplyJob';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -39,6 +40,12 @@ const AdminStack = () => (
     <Stack.Screen name="HODs" component={AdminHODs} />
     <Stack.Screen name="Companies" component={AdminCompanies} />
     <Stack.Screen name="SelectedStudents" component={AdminSelectedStudents} />
+  </Stack.Navigator>
+);
+const JobApplyStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="StudentOpenings" component={StudentOpenings} />
+    <Stack.Screen name="ApplyJob" component={ApplyJob} />
   </Stack.Navigator>
 );
 
@@ -208,7 +215,7 @@ const StudentTabs = () => (
     /> */}
     <Tab.Screen
       name="StudentOpenings"
-      component={StudentOpenings}
+      component={JobApplyStack}
       options={{
         tabBarLabel: 'Openings',
         tabBarIcon: ({color}) => (
