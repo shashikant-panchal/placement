@@ -9,8 +9,10 @@ import {
 import axios from 'axios';
 import JobCard from '../components/JobCard';
 import Header from '../components/Header';
+import {useNavigation} from '@react-navigation/native';
 
 const StudentOpenings = () => {
+  const navigation = useNavigation();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -23,6 +25,7 @@ const StudentOpenings = () => {
     try {
       const response = await axios.get('https://npb-lyart.vercel.app/api/jobs');
       setJobs(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -51,7 +54,9 @@ const StudentOpenings = () => {
       <View style={styles.container}>
         <FlatList
           data={jobs}
-          renderItem={({item}) => <JobCard job={item} />}
+          renderItem={({item}) => (
+            <JobCard job={item} navigation={navigation} />
+          )}
           keyExtractor={item => item._id}
           refreshControl={
             <RefreshControl
