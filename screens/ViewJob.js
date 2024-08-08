@@ -1,71 +1,20 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, ScrollView, Button, Alert} from 'react-native';
 import Header from '../components/Header';
-import {AuthContext} from '../AuthContext';
 
-const ApplyJob = ({route, navigation}) => {
-  const {userData} = useContext(AuthContext);
-  console.log('UserData===>', JSON.stringify(userData));
+const ViewJob = ({route, navigation}) => {
   const {job} = route.params;
 
-  const [hasApplied, setHasApplied] = useState(false);
-
-  useEffect(() => {
-    const checkIfApplied = async () => {
-      try {
-        const response = await fetch(
-          `https://npb-lyart.vercel.app/api/hasApplied/${userData._id}/${job._id}`,
-        );
-        const result = await response.json();
-
-        if (result.applied) {
-          setHasApplied(true);
-        }
-      } catch (error) {
-        console.error('Error checking if the job is already applied:', error);
-      }
-    };
-
-    checkIfApplied();
-  }, [userData._id, job._id]);
-
-  const handleApplyNow = async () => {
-    try {
-      const response = await fetch(
-        'https://npb-lyart.vercel.app/api/applyJob',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            studentId: userData._id,
-            jobId: job._id,
-          }),
-        },
-      );
-
-      if (response.ok) {
-        setHasApplied(true);
-        Alert.alert(
-          'Application Submitted',
-          'Your application has been submitted successfully!',
-        );
-      } else {
-        Alert.alert(
-          'Error',
-          'Failed to submit your application. Please try again.',
-        );
-      }
-    } catch (error) {
-      Alert.alert('Error', 'An error occurred. Please try again.');
-      console.error('Error applying for the job:', error);
-    }
+  const handleApplyNow = () => {
+    Alert.alert(
+      'Application Submitted',
+      'Your application has been submitted successfully!',
+    );
   };
 
   return (
     <>
-      <Header title={'Apply Job'} />
+      <Header title={'View Job'} />
       <View style={styles.container}>
         <ScrollView style={styles.scrollView}>
           <Text style={styles.title}>{job.designation}</Text>
@@ -99,18 +48,6 @@ const ApplyJob = ({route, navigation}) => {
           <Text style={styles.descriptionTitle}>Job Description:</Text>
           <Text style={styles.description}>{job.jobDescription}</Text>
         </ScrollView>
-
-        <View style={styles.buttonContainer}>
-          {hasApplied ? (
-            <Text style={styles.appliedText}>Already Applied</Text>
-          ) : (
-            <Button
-              title="Apply Now"
-              onPress={handleApplyNow}
-              color="#ff7f50"
-            />
-          )}
-        </View>
       </View>
     </>
   );
@@ -175,4 +112,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ApplyJob;
+export default ViewJob;

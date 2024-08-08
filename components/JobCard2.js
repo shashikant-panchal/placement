@@ -1,11 +1,10 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const JobCard = ({job, navigation}) => {
+const JobCard2 = ({job, navigation}) => {
   return (
     <View style={styles.card}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ApplyJob' || 'ViewJob', {job})}>
+      <TouchableOpacity onPress={() => navigation.navigate('ViewJob', {job})}>
         <Text style={styles.title}>{job.companyName}</Text>
         <Text style={styles.company}>{job.designation}</Text>
       </TouchableOpacity>
@@ -41,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default JobCard;
+export default JobCard2;

@@ -9,8 +9,11 @@ import {
 import axios from 'axios';
 import JobCard from '../components/JobCard';
 import Header from '../components/Header';
+import JobCard2 from '../components/JobCard2';
+import {useNavigation} from '@react-navigation/native';
 
 const CompanyApplications = () => {
+  const navigation = useNavigation();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -51,7 +54,9 @@ const CompanyApplications = () => {
       <View style={styles.container}>
         <FlatList
           data={jobs}
-          renderItem={({item}) => <JobCard job={item} />}
+          renderItem={({item}) => (
+            <JobCard2 job={item} navigation={navigation} />
+          )}
           keyExtractor={item => item._id}
           refreshControl={
             <RefreshControl

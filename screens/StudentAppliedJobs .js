@@ -1,110 +1,114 @@
-import React from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import React, {useEffect, useState, useContext} from 'react';
+import {View, Text, StyleSheet, FlatList, RefreshControl} from 'react-native';
 import Header from '../components/Header';
-
-// Sample JSON data for applied jobs
-const appliedJobsData = [
-  { id: '1', companyName: 'ABC Inc.', designation: 'Software Engineer', applyDate: '2024-06-30', status: 'Pending' },
-  { id: '2', companyName: 'XYZ Ltd.', designation: 'Product Manager', applyDate: '2024-06-29', status: 'Accepted' },
-  { id: '3', companyName: 'PQR Corp.', designation: 'UI/UX Designer', applyDate: '2024-06-28', status: 'Rejected' },
-];
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'Pending':
-      return '#ffcc00'; // yellow
-    case 'Accepted':
-      return '#00cc66'; // green
-    case 'Rejected':
-      return '#ff6666'; // red
-    default:
-      return '#999999'; // gray for unknown status
-  }
-};
+import {AuthContext} from '../AuthContext';
 
 const StudentAppliedJobs = () => {
-  const renderItem = ({ item }) => (
-    <View style={[styles.jobCard, { borderColor: getStatusColor(item.status) }]}>
-      <Text style={styles.jobId}>Job ID: {item.id}</Text>
-      <Text style={styles.companyName}>Company: {item.companyName}</Text>
-      <Text style={styles.designation}>Designation: {item.designation}</Text>
-      <Text style={styles.applyDate}>Apply Date: {item.applyDate}</Text>
-      <View style={[styles.statusContainer, { backgroundColor: getStatusColor(item.status) }]}>
-        <Text style={styles.status}>{item.status}</Text>
-      </View>
+  const {userData} = useContext(AuthContext);
+  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchAppliedJobs = async () => {
+    try {
+      const response = await fetch(
+        `https://npb-lyart.vercel.app/api/appliedJobs/${userData._id}`,
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const jobs = await response.json();
+      setAppliedJobs(jobs);
+    } catch (error) {
+      console.error('Error fetching applied jobs:', error);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchAppliedJobs();
+    setRefreshing(false);
+  };
+
+  useEffect(() => {
+    fetchAppliedJobs();
+  }, [userData._id]);
+
+  const renderJobItem = ({item}) => (
+    <View style={styles.jobContainer}>
+      <Text style={styles.title}>{item.designation}</Text>
+      <Text style={styles.companyName}>{item.companyName}</Text>
+      <Text style={styles.location}>Location: {item.location}</Text>
+      <Text style={styles.salary}>Salary: ₹ {item.salaryPackage} LPA</Text>
     </View>
   );
 
   return (
     <>
-    <Header title={'Applies Jobs'} />
-    <View style={styles.container}>
-      <FlatList
-        data={appliedJobsData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
+      <Header title={'Applied Jobs'} />
+      <View style={styles.container}>
+        <FlatList
+          data={appliedJobs}
+          renderItem={renderJobItem}
+          keyExtractor={item => item._id}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+        />
+        {appliedJobs.length === 0 && !refreshing && (
+          <Text style={styles.noJobsText}>
+            You have not applied to any jobs yet.
+          </Text>
+        )}
+      </View>
     </>
   );
 };
 
-export default StudentAppliedJobs;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    padding: 16,
+    backgroundColor: '#f9f9f9',
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  jobCard: {
-    backgroundColor: '#ffffff',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#cccccc',
+  jobContainer: {
+    marginBottom: 16,
+    padding: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  jobId: {
-    fontSize: 16,
+  title: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
+    color: '#333',
   },
   companyName: {
     fontSize: 16,
-    marginBottom: 5,
+    fontWeight: '600',
+    color: '#555',
+    marginVertical: 4,
   },
-  designation: {
-    fontSize: 16,
-    marginBottom: 5,
+  location: {
+    fontSize: 14,
+    color: '#777',
   },
-  applyDate: {
-    fontSize: 16,
-    marginBottom: 5,
+  salary: {
+    fontSize: 14,
+    color: '#777',
+    marginTop: 4,
   },
-  statusContainer: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-    marginBottom: 5,
-  },
-  status: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  noJobsText: {
+    fontSize: 18,
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
+
+export default StudentAppliedJobs;

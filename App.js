@@ -28,6 +28,7 @@ import SignUpScreen from './screens/SignUpScreen';
 import CompanyNotofications from './screens/CompanyNotofications';
 import StudentNotifications from './screens/StudentNotifications';
 import ApplyJob from './screens/ApplyJob';
+import ViewJob from './screens/ViewJob';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -46,6 +47,25 @@ const JobApplyStack = () => (
   <Stack.Navigator screenOptions={{headerShown: false}}>
     <Stack.Screen name="StudentOpenings" component={StudentOpenings} />
     <Stack.Screen name="ApplyJob" component={ApplyJob} />
+  </Stack.Navigator>
+);
+
+const AdminOpeningsStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="Openings" component={AdminOpenings} />
+    <Stack.Screen name="ViewJob" component={ViewJob} />
+  </Stack.Navigator>
+);
+const CompanyOpeningsStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="CompanyApplications" component={CompanyApplications} />
+    <Stack.Screen name="ViewJob" component={ViewJob} />
+  </Stack.Navigator>
+);
+const HodOpeningsStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="HODPlacementDrive" component={HODPlacementDrive} />
+    <Stack.Screen name="ViewJob" component={ViewJob} />
   </Stack.Navigator>
 );
 
@@ -97,7 +117,7 @@ const AdminTabs = () => (
     />
     <Tab.Screen
       name="Openings"
-      component={AdminOpenings}
+      component={AdminOpeningsStack}
       options={{
         tabBarLabel: 'Openings',
         tabBarIcon: ({color}) => (
@@ -166,7 +186,7 @@ const HODTabs = () => (
     />
     <Tab.Screen
       name="HODPlacementDrive"
-      component={HODPlacementDrive}
+      component={HodOpeningsStack}
       options={{
         tabBarLabel: 'Placement Drive',
         tabBarIcon: ({color}) => (
@@ -223,7 +243,7 @@ const StudentTabs = () => (
         ),
       }}
     />
-    {/* <Tab.Screen
+    <Tab.Screen
       name="StudentAppliedJobs"
       component={StudentAppliedJobs}
       options={{
@@ -232,7 +252,7 @@ const StudentTabs = () => (
           <Ionicons name="document-text" color={color} size={26} />
         ),
       }}
-    /> */}
+    />
     <Tab.Screen
       name="StudentNotifications"
       component={StudentNotifications}
@@ -284,7 +304,7 @@ const CompanyTabs = () => (
     />
     <Tab.Screen
       name="CompanyApplications"
-      component={CompanyApplications}
+      component={CompanyOpeningsStack}
       options={{
         tabBarLabel: 'Applications',
         tabBarIcon: ({color}) => (
