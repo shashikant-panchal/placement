@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import Header from '../components/Header';
@@ -16,6 +17,9 @@ const CompanyJobs = () => {
   const [twelfthPercentage, setTwelfthPercentage] = useState('');
   const [graduationGPA, setGraduationGPA] = useState('');
   const [salaryPackage, setSalaryPackage] = useState('');
+  const [jobDescription, setJobDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [experienceRequired, setExperienceRequired] = useState('');
   const [jobAdded, setJobAdded] = useState(false);
   const [errorText, setErrorText] = useState('');
 
@@ -25,7 +29,10 @@ const CompanyJobs = () => {
       !companyName ||
       !twelfthPercentage ||
       !graduationGPA ||
-      !salaryPackage
+      !salaryPackage ||
+      !jobDescription ||
+      !location ||
+      !experienceRequired
     ) {
       setErrorText('Please fill out all details.');
       return;
@@ -37,6 +44,9 @@ const CompanyJobs = () => {
       twelfthPercentage: parseFloat(twelfthPercentage),
       graduationGPA: parseFloat(graduationGPA),
       salaryPackage: parseFloat(salaryPackage),
+      jobDescription,
+      location,
+      experienceRequired,
     };
 
     try {
@@ -57,6 +67,9 @@ const CompanyJobs = () => {
       setTwelfthPercentage('');
       setGraduationGPA('');
       setSalaryPackage('');
+      setJobDescription('');
+      setLocation('');
+      setExperienceRequired('');
 
       Alert.alert('Success', 'Job added successfully!');
     } catch (error) {
@@ -69,47 +82,72 @@ const CompanyJobs = () => {
     <>
       <Header title={'Add a Job'} />
       <View style={styles.container}>
-        <Text style={styles.label}>Designation:</Text>
-        <TextInput
-          style={styles.input}
-          value={designation}
-          onChangeText={text => setDesignation(text)}
-          placeholder="Enter designation"
-        />
-        <Text style={styles.label}>Company Name:</Text>
-        <TextInput
-          style={styles.input}
-          value={companyName}
-          onChangeText={text => setCompanyName(text)}
-          placeholder="Enter company name"
-        />
-        <Text style={styles.label}>12th Percentage:</Text>
-        <TextInput
-          style={styles.input}
-          value={twelfthPercentage}
-          onChangeText={text => setTwelfthPercentage(text)}
-          keyboardType="numeric"
-          placeholder="Enter percentage"
-        />
-        <Text style={styles.label}>Graduation GPA:</Text>
-        <TextInput
-          style={styles.input}
-          value={graduationGPA}
-          onChangeText={text => setGraduationGPA(text)}
-          keyboardType="numeric"
-          placeholder="Enter GPA"
-        />
-        <Text style={styles.label}>Salary Package:</Text>
-        <TextInput
-          style={styles.input}
-          value={salaryPackage}
-          onChangeText={text => setSalaryPackage(text)}
-          keyboardType="numeric"
-          placeholder="Enter salary package"
-        />
-        <TouchableOpacity style={styles.button} onPress={handleAddJob}>
-          <Text style={styles.buttonText}>Add Job</Text>
-        </TouchableOpacity>
+        <ScrollView>
+          <Text style={styles.label}>Designation:</Text>
+          <TextInput
+            style={styles.input}
+            value={designation}
+            onChangeText={text => setDesignation(text)}
+            placeholder="Enter designation"
+          />
+          <Text style={styles.label}>Company Name:</Text>
+          <TextInput
+            style={styles.input}
+            value={companyName}
+            onChangeText={text => setCompanyName(text)}
+            placeholder="Enter company name"
+          />
+          <Text style={styles.label}>12th Percentage:</Text>
+          <TextInput
+            style={styles.input}
+            value={twelfthPercentage}
+            onChangeText={text => setTwelfthPercentage(text)}
+            keyboardType="numeric"
+            placeholder="Enter percentage"
+          />
+          <Text style={styles.label}>Graduation GPA:</Text>
+          <TextInput
+            style={styles.input}
+            value={graduationGPA}
+            onChangeText={text => setGraduationGPA(text)}
+            keyboardType="numeric"
+            placeholder="Enter GPA"
+          />
+          <Text style={styles.label}>Salary Package:</Text>
+          <TextInput
+            style={styles.input}
+            value={salaryPackage}
+            onChangeText={text => setSalaryPackage(text)}
+            keyboardType="numeric"
+            placeholder="Enter salary package"
+          />
+          <Text style={styles.label}>Job Description:</Text>
+          <TextInput
+            style={styles.textArea}
+            value={jobDescription}
+            onChangeText={text => setJobDescription(text)}
+            placeholder="Enter job description"
+            multiline
+            textAlignVertical="top"
+          />
+          <Text style={styles.label}>Location:</Text>
+          <TextInput
+            style={styles.input}
+            value={location}
+            onChangeText={text => setLocation(text)}
+            placeholder="Enter job location"
+          />
+          <Text style={styles.label}>Experience Required:</Text>
+          <TextInput
+            style={styles.input}
+            value={experienceRequired}
+            onChangeText={text => setExperienceRequired(text)}
+            placeholder="Enter experience required"
+          />
+          <TouchableOpacity style={styles.button} onPress={handleAddJob}>
+            <Text style={styles.buttonText}>Add Job</Text>
+          </TouchableOpacity>
+        </ScrollView>
 
         {errorText ? <Text style={styles.errorText}>{errorText}</Text> : null}
         {jobAdded && (
@@ -135,6 +173,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
+  },
+  textArea: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    minHeight: 100, // Minimum height for the text area
+    height: 'auto', // Allow height to adjust with content
   },
   button: {
     backgroundColor: '#007bff',
