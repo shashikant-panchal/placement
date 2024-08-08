@@ -41,7 +41,10 @@ const LoginScreen = () => {
         setHods(hodsResponse.data);
         setCompanies(companiesResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error.message);
+        setErrorMessage(
+          'Network Error: Unable to fetch data. Please check your connection.',
+        );
       }
     };
 
