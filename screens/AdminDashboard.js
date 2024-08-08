@@ -120,7 +120,7 @@ const AdminDashboard = () => {
           <TouchableOpacity
             style={[styles.card, {backgroundColor: '#87ceeb'}]}
             onPress={() => navigateToScreen('SelectedStudents')}>
-            <Text style={styles.label}>Selected Students</Text>
+            <Text style={styles.label}>Placed Students</Text>
             <Text style={styles.number}>
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
