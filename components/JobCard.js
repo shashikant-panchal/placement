@@ -1,11 +1,13 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const JobCard = ({job}) => {
+const JobCard = ({job, navigation}) => {
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{job.companyName}</Text>
-      <Text style={styles.company}>{job.designation}</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('ApplyJob', {job})}>
+        <Text style={styles.title}>{job.companyName}</Text>
+        <Text style={styles.company}>{job.designation}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
