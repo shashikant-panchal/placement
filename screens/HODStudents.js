@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import Header from '../components/Header';
+import {AuthContext} from '../AuthContext';
 
 const HODStudents = () => {
+  const {userData} = useContext(AuthContext);
   const [studentsData, setStudentsData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -40,7 +42,11 @@ const HODStudents = () => {
       const response = await axios.get(
         'https://npb-lyart.vercel.app/api/students',
       );
-      setStudentsData(response.data);
+      // Filter students by branch
+      const filteredStudents = response.data.filter(
+        student => student.branch === userData.branch,
+      );
+      setStudentsData(filteredStudents);
     } catch (error) {
       console.error('Error fetching students:', error);
     } finally {
@@ -83,7 +89,10 @@ const HODStudents = () => {
           },
         },
       );
-      setStudentsData([...studentsData, response.data]);
+      // Add the new student only if their branch matches the user's branch
+      if (response.data.branch === userData.branch) {
+        setStudentsData([...studentsData, response.data]);
+      }
       setModalVisible(false);
       setNewStudent({
         name: '',
@@ -124,7 +133,7 @@ const HODStudents = () => {
           }>
           {studentsData.map(student => (
             <View key={student._id} style={styles.card}>
-              <Text
+              {/* <Text
                 onPress={() => handleSelectStudent(student._id)}
                 style={{
                   color: 'green',
@@ -134,7 +143,7 @@ const HODStudents = () => {
                   padding: 10,
                 }}>
                 Mark as Placed
-              </Text>
+              </Text> */}
 
               <View style={styles.infoContainer}>
                 <Text style={styles.infoLabel}>ID:</Text>
@@ -320,24 +329,22 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   input: {
+    height: 40,
+    borderColor: '#ddd',
     borderWidth: 1,
-    borderColor: '#ccc',
+    marginBottom: 12,
+    paddingLeft: 10,
     borderRadius: 5,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    marginBottom: 10,
   },
   addStudentButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    padding: 12,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 10,
   },
   addStudentButtonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   loaderContainer: {

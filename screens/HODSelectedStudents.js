@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,17 +6,16 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
-  TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
 import Header from '../components/Header';
+import {AuthContext} from '../AuthContext';
 
-const AdminSelectedStudents = () => {
+const HODSelectedStudents = () => {
+  const {userData} = useContext(AuthContext);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [filteredStudents, setFilteredStudents] = useState([]);
-  const [activeBatch, setActiveBatch] = useState(null);
 
   useEffect(() => {
     fetchSelectedStudents();
@@ -27,8 +26,11 @@ const AdminSelectedStudents = () => {
       const response = await axios.get(
         'https://npb-lyart.vercel.app/api/selectedStudents',
       );
-      setSelectedStudents(response.data);
-      setFilteredStudents(response.data); // Initial population of filtered students
+      // Filter students by branch
+      const filteredStudents = response.data.filter(
+        student => student.branch === userData.branch,
+      );
+      setSelectedStudents(filteredStudents);
     } catch (error) {
       console.error('Error fetching selected students:', error);
     } finally {
@@ -41,18 +43,6 @@ const AdminSelectedStudents = () => {
     setRefreshing(true);
     fetchSelectedStudents();
   }, []);
-
-  const filterByBatch = batch => {
-    setActiveBatch(batch);
-    if (batch === null) {
-      setFilteredStudents(selectedStudents); // Show all students if no batch is selected
-    } else {
-      const filtered = selectedStudents.filter(
-        student => student.batch === batch,
-      );
-      setFilteredStudents(filtered);
-    }
-  };
 
   const renderItem = ({item}) => (
     <View style={styles.card}>
@@ -95,42 +85,8 @@ const AdminSelectedStudents = () => {
   return (
     <View style={styles.container}>
       <Header title="Placed Students" />
-      <View style={styles.filterContainer}>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            activeBatch === null && styles.activeFilterButton,
-          ]}
-          onPress={() => filterByBatch(null)}>
-          <Text style={styles.filterButtonText}>All Batches</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            activeBatch === '2022' && styles.activeFilterButton,
-          ]}
-          onPress={() => filterByBatch('2022')}>
-          <Text style={styles.filterButtonText}>2022</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            activeBatch === '2023' && styles.activeFilterButton,
-          ]}
-          onPress={() => filterByBatch('2023')}>
-          <Text style={styles.filterButtonText}>2023</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.filterButton,
-            activeBatch === '2024' && styles.activeFilterButton,
-          ]}
-          onPress={() => filterByBatch('2024')}>
-          <Text style={styles.filterButtonText}>2024</Text>
-        </TouchableOpacity>
-      </View>
       <FlatList
-        data={filteredStudents}
+        data={selectedStudents}
         renderItem={renderItem}
         keyExtractor={item => item._id}
         contentContainerStyle={styles.studentsContainer}
@@ -154,25 +110,6 @@ const styles = StyleSheet.create({
   studentsContainer: {
     paddingVertical: 16,
     paddingHorizontal: 12,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 12,
-    backgroundColor: '#fff',
-  },
-  filterButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    backgroundColor: '#e0e0e0',
-  },
-  activeFilterButton: {
-    backgroundColor: '#4CAF50',
-  },
-  filterButtonText: {
-    fontSize: 14,
-    color: '#000',
   },
   card: {
     backgroundColor: '#fff',
@@ -203,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AdminSelectedStudents;
+export default HODSelectedStudents;

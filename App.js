@@ -29,6 +29,7 @@ import CompanyNotofications from './screens/CompanyNotofications';
 import StudentNotifications from './screens/StudentNotifications';
 import ApplyJob from './screens/ApplyJob';
 import ViewJob from './screens/ViewJob';
+import HODSelectedStudents from './screens/HODSelectedStudents';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -191,6 +192,16 @@ const HODTabs = () => (
         tabBarLabel: 'Placement Drive',
         tabBarIcon: ({color}) => (
           <Ionicons name="briefcase" color={color} size={26} />
+        ),
+      }}
+    />
+    <Tab.Screen
+      name="Selected Students"
+      component={HODSelectedStudents}
+      options={{
+        tabBarLabel: 'Selected Students',
+        tabBarIcon: ({color}) => (
+          <Ionicons name="checkmark-done" color={color} size={26} />
         ),
       }}
     />
