@@ -27,6 +27,7 @@ const HODStudents = () => {
     dob: '',
     phone: '',
     branch: '',
+    batch: '',
     email: '',
     password: '',
   });
@@ -101,6 +102,7 @@ const HODStudents = () => {
         dob: '',
         phone: '',
         branch: '',
+        batch: '',
         email: '',
         password: '',
       });
@@ -234,6 +236,14 @@ const HODStudents = () => {
                 value={newStudent.branch}
                 onChangeText={text =>
                   setNewStudent({...newStudent, branch: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Batch"
+                value={newStudent.batch}
+                onChangeText={text =>
+                  setNewStudent({...newStudent, batch: text})
                 }
               />
               <TextInput
