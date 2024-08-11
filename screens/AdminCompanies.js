@@ -200,6 +200,7 @@ const AdminCompanies = () => {
               <TextInput
                 style={styles.input}
                 placeholder="Password"
+                secureTextEntry
                 value={newCompany.password}
                 onChangeText={text =>
                   setNewCompany({...newCompany, password: text})
