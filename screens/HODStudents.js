@@ -43,10 +43,11 @@ const HODStudents = () => {
       const response = await axios.get(
         'https://npb-lyart.vercel.app/api/students',
       );
-      // Filter students by branch
       const filteredStudents = response.data.filter(
-        student => student.branch === userData.branch,
+        student =>
+          student.branch.toLowerCase() === userData.branch.toLowerCase(),
       );
+
       setStudentsData(filteredStudents);
     } catch (error) {
       console.error('Error fetching students:', error);
