@@ -37,9 +37,9 @@ const LoginScreen = () => {
             axios.get('https://npb-lyart.vercel.app/api/hods'),
             axios.get('https://npb-lyart.vercel.app/api/companies'),
           ]);
-        setStudents(studentsResponse.data);
-        setHods(hodsResponse.data);
-        setCompanies(companiesResponse.data);
+        setStudents(studentsResponse?.data);
+        setHods(hodsResponse?.data);
+        setCompanies(companiesResponse?.data);
       } catch (error) {
         console.error('Error fetching data:', error.message);
         setErrorMessage(
