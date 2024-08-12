@@ -22,19 +22,48 @@ const AdminOpenings = () => {
   }, []);
 
   const fetchJobs = async () => {
+    setLoading(true);
     try {
-      const response = await axios.get('https://npb-lyart.vercel.app/api/jobs');
-      setJobs(response.data);
-      setLoading(false);
+      const jobsResponse = await axios.get(
+        'https://npb-lyart.vercel.app/api/jobs',
+      );
+
+      if (!Array.isArray(jobsResponse.data)) {
+        throw new Error('Unexpected response data format');
+      }
+
+      const jobsData = jobsResponse.data;
+      const jobsWithApplicants = await Promise.all(
+        jobsData.map(async job => {
+          try {
+            const applicantsResponse = await axios.get(
+              `https://npb-lyart.vercel.app/api/jobApplicants/${job._id}`,
+            );
+            return {
+              ...job,
+              applicants: applicantsResponse.data,
+            };
+          } catch (error) {
+            console.error('Error fetching applicants for job:', error);
+            return {
+              ...job,
+              applicants: [], // return an empty array if there's an error fetching applicants
+            };
+          }
+        }),
+      );
+
+      setJobs(jobsWithApplicants);
     } catch (error) {
       console.error('Error fetching jobs:', error);
+    } finally {
       setLoading(false);
     }
   };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchJobs().then(() => {
+    fetchJobs().finally(() => {
       setRefreshing(false);
     });
   }, []);
@@ -49,7 +78,7 @@ const AdminOpenings = () => {
 
   return (
     <>
-      <Header title={'Jobs Listing'} />
+      <Header title="Jobs Listing" />
       <View style={styles.container}>
         <FlatList
           data={jobs}
