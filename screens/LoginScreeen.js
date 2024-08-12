@@ -18,7 +18,7 @@ const roleCredentials = {
 };
 
 const LoginScreen = () => {
-  const {setUserRole, setUserData} = useContext(AuthContext);
+  const {setUserRole, setUserData, storeUserData} = useContext(AuthContext);
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(null);
@@ -51,7 +51,7 @@ const LoginScreen = () => {
     fetchData();
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!userId || !password || !role) {
       setErrorMessage('Please fill all details.');
       return;
@@ -96,6 +96,7 @@ const LoginScreen = () => {
       setUserRole(role);
       setUserData({userId, role});
     }
+    await storeUserData(user);
     setErrorMessage('');
   };
 

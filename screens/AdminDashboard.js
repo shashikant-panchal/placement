@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,9 +11,11 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import Header from '../components/Header';
+import {AuthContext} from '../AuthContext';
 
 const AdminDashboard = () => {
   const navigation = useNavigation();
+  const {logout} = useContext(AuthContext);
   const [data, setData] = useState({
     studentsNumber: 0,
     hodsNumber: 0,
@@ -65,9 +67,19 @@ const AdminDashboard = () => {
     fetchData();
   };
 
+  const handleLogout = async () => {
+    await logout(); // Call logout function from context
+    navigation.navigate('Login'); // Replace 'Login' with your actual login screen name
+  };
+
   return (
     <>
       <Header title={'Admin Dashboard'} />
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView
         contentContainerStyle={styles.container}
         refreshControl={
@@ -142,6 +154,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#ecf0f1',
     padding: 20,
+  },
+  header: {
+    width: '100%',
+    alignItems: 'flex-end',
+    padding: 10,
+  },
+  logoutButton: {
+    backgroundColor: '#e74c3c',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   row: {
     flexDirection: 'row',

@@ -1,10 +1,21 @@
 import React, {useContext} from 'react';
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import Header from '../components/Header';
 import {AuthContext} from '../AuthContext';
 
 const StudentHome = () => {
-  const {userData} = useContext(AuthContext);
+  const {userData, logout} = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    await logout();
+    navigation.navigate('Login');
+  };
 
   return (
     <>
@@ -13,20 +24,23 @@ const StudentHome = () => {
         <Text style={styles.profileHeading}>Student Profile</Text>
         <View style={styles.card}>
           <Text style={styles.label}>Name:</Text>
-          <Text style={styles.text}>{userData.name}</Text>
+          <Text style={styles.text}>{userData?.name}</Text>
 
           <Text style={styles.label}>Address:</Text>
-          <Text style={styles.text}>{userData.address}</Text>
+          <Text style={styles.text}>{userData?.address}</Text>
 
           <Text style={styles.label}>Gender:</Text>
-          <Text style={styles.text}>{userData.gender}</Text>
+          <Text style={styles.text}>{userData?.gender}</Text>
 
           <Text style={styles.label}>Phone:</Text>
-          <Text style={styles.text}>{userData.phone}</Text>
+          <Text style={styles.text}>{userData?.phone}</Text>
 
           <Text style={styles.label}>Email:</Text>
-          <Text style={styles.text}>{userData.email}</Text>
+          <Text style={styles.text}>{userData?.email}</Text>
         </View>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
       </ScrollView>
     </>
   );
@@ -65,5 +79,18 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     marginBottom: 15,
+  },
+  logoutButton: {
+    backgroundColor: '#e74c3c',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
