@@ -41,6 +41,7 @@ const ApplyJob = ({route, navigation}) => {
           body: JSON.stringify({
             studentId: userData._id,
             jobId: job._id,
+            userData,
           }),
         },
       );
