@@ -27,41 +27,43 @@ const CompanyApplications = () => {
     fetchJobs();
   }, []);
 
-  // const fetchJobs = async () => {
-  //   try {
-  //     const response = await axios.get('https://npb-lyart.vercel.app/api/jobs');
-  //     const filteredJobs = response.data.filter(
-  //       job =>
-  //         job.companyName.toLowerCase() === userData.companyName.toLowerCase(),
-  //     );
-  //     setJobs(filteredJobs);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.error('Error fetching jobs:', error);
-  //     setLoading(false);
-  //   }
-  // };
-
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('https://npb-lyart.vercel.app/api/jobs');
-      if (!Array.isArray(response.data)) {
+      const jobsResponse = await axios.get(
+        'https://npb-lyart.vercel.app/api/jobs',
+      );
+      if (!Array.isArray(jobsResponse.data)) {
         throw new Error('Unexpected response data format');
       }
-      const userCompanyName =
-        userData && userData.companyName
-          ? userData.companyName.toLowerCase()
-          : '';
-      const filteredJobs = response.data.filter(job => {
-        return (
-          typeof job.companyName === 'string' &&
-          job.companyName.toLowerCase() === userCompanyName
-        );
-      });
 
-      setJobs(filteredJobs);
-      console.log('=======>', JSON.stringify(jobs));
+      const userCompanyName = userData?.companyName?.toLowerCase() || '';
+      const filteredJobs = jobsResponse.data.filter(
+        job =>
+          typeof job.companyName === 'string' &&
+          job.companyName.toLowerCase() === userCompanyName,
+      );
+
+      // Fetch applicants for each job
+      const jobsWithApplicants = await Promise.all(
+        filteredJobs.map(async job => {
+          try {
+            const applicantsResponse = await axios.get(
+              `https://npb-lyart.vercel.app/api/jobApplicants/${job._id}`,
+            );
+            return {
+              ...job,
+              applicants: applicantsResponse.data,
+            };
+          } catch (error) {
+            console.error('Error fetching applicants for job:', error);
+            return job; // Return job without applicants if there's an error
+          }
+        }),
+      );
+
+      setJobs(jobsWithApplicants);
+      console.log('=======>', JSON.stringify(jobsWithApplicants));
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
