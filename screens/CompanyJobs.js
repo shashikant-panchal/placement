@@ -20,6 +20,7 @@ const CompanyJobs = () => {
   const [jobDescription, setJobDescription] = useState('');
   const [location, setLocation] = useState('');
   const [experienceRequired, setExperienceRequired] = useState('');
+  const [currentDate, setCurrentDate] = useState('');
   const [jobAdded, setJobAdded] = useState(false);
   const [errorText, setErrorText] = useState('');
 
@@ -32,7 +33,8 @@ const CompanyJobs = () => {
       !salaryPackage ||
       !jobDescription ||
       !location ||
-      !experienceRequired
+      !experienceRequired ||
+      !currentDate
     ) {
       setErrorText('Please fill out all details.');
       return;
@@ -47,6 +49,7 @@ const CompanyJobs = () => {
       jobDescription,
       location,
       experienceRequired,
+      currentDate,
     };
 
     try {
@@ -70,6 +73,7 @@ const CompanyJobs = () => {
       setJobDescription('');
       setLocation('');
       setExperienceRequired('');
+      setCurrentDate('');
 
       Alert.alert('Success', 'Job added successfully!');
     } catch (error) {
@@ -143,6 +147,12 @@ const CompanyJobs = () => {
             value={experienceRequired}
             onChangeText={text => setExperienceRequired(text)}
             placeholder="Enter experience required"
+          />
+          <TextInput
+            style={styles.input}
+            value={currentDate}
+            onChangeText={text => setCurrentDate(text)}
+            placeholder="Enter Date Of Posting"
           />
           <TouchableOpacity style={styles.button} onPress={handleAddJob}>
             <Text style={styles.buttonText}>Add Job</Text>

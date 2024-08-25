@@ -15,6 +15,9 @@ const JobCard2 = ({job, navigation}) => {
       <Text style={styles.company}>{job.companyName}</Text>
       <Text style={styles.location}>Location: {job.location}</Text>
       <Text style={styles.salary}>Salary: ₹ {job.salaryPackage} LPA</Text>
+      <Text style={styles.salary}>
+        Posted on: {job.currentDate ? job.currentDate : 'Posted long ago'}
+      </Text>
 
       {/* Applicants section */}
       {job.applicants && job.applicants.length > 0 ? (
