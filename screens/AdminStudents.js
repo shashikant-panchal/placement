@@ -18,7 +18,19 @@ const AdminStudents = () => {
   const [studentsData, setStudentsData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const [newStudent, setNewStudent] = useState({
+    name: '',
+    address: '',
+    gender: '',
+    dob: '',
+    phone: '',
+    branch: '',
+    batch: '',
+    email: '',
+    password: '',
+  });
+  const [editStudent, setEditStudent] = useState({
     name: '',
     address: '',
     gender: '',
@@ -104,9 +116,41 @@ const AdminStudents = () => {
     }
   };
 
+  const handleUpdateStudent = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        `https://npb-lyart.vercel.app/api/students/${editStudent._id}`,
+        editStudent,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      setStudentsData(prevStudents =>
+        prevStudents.map(student =>
+          student._id === response.data._id ? response.data : student,
+        ),
+      );
+      setEditModalVisible(false);
+      setEditStudent(null);
+      alert('Student details updated successfully!');
+    } catch (error) {
+      console.error('Error updating student:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
     fetchStudents().finally(() => setRefreshing(false));
+  };
+
+  const openEditModal = student => {
+    setEditStudent(student);
+    setEditModalVisible(true);
   };
 
   return (
@@ -128,16 +172,12 @@ const AdminStudents = () => {
             <View key={student._id} style={styles.card}>
               <Text
                 onPress={() => handleSelectStudent(student._id)}
-                style={{
-                  color: 'green',
-                  fontWeight: 'bold',
-                  textAlign: 'right',
-                  fontSize: 16,
-                  padding: 10,
-                }}>
+                style={styles.markAsPlacedText}>
                 Mark as Placed
               </Text>
-
+              <TouchableOpacity onPress={() => openEditModal(student)}>
+                <Text style={styles.editButtonText}>Edit</Text>
+              </TouchableOpacity>
               <View style={styles.infoContainer}>
                 <Text style={styles.infoLabel}>ID:</Text>
                 <Text style={styles.infoText}>{student._id}</Text>
@@ -262,6 +302,95 @@ const AdminStudents = () => {
             </View>
           </View>
         </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={editModalVisible}
+          onRequestClose={() => setEditModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={editStudent?.name || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, name: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Address"
+                value={editStudent?.address || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, address: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Gender"
+                value={editStudent?.gender || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, gender: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Date of Birth"
+                value={editStudent?.dob || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, dob: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone"
+                value={editStudent?.phone || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, phone: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Branch"
+                value={editStudent?.branch || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, branch: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Batch"
+                value={editStudent?.batch || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, batch: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={editStudent?.email || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, email: text})
+                }
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={editStudent?.password || ''}
+                onChangeText={text =>
+                  setEditStudent({...editStudent, password: text})
+                }
+                secureTextEntry
+              />
+              <TouchableOpacity
+                style={styles.addStudentButton}
+                onPress={handleUpdateStudent}>
+                <Text style={styles.addStudentButtonText}>Update Student</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </View>
     </>
   );
@@ -355,6 +484,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  markAsPlacedText: {
+    color: 'green',
+    fontWeight: 'bold',
+    textAlign: 'right',
+    fontSize: 16,
+    padding: 10,
+  },
+  editButtonText: {
+    color: 'blue',
+    fontWeight: 'bold',
+    textAlign: 'right',
+    fontSize: 16,
+    padding: 10,
   },
 });
 
