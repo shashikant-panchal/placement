@@ -84,7 +84,36 @@ const AdminStudents = () => {
     }
   };
 
+  const validateInputs = studentData => {
+    if (!/^\d{10}$/.test(studentData.phone)) {
+      Alert.alert('Error', 'Phone number should contain exactly 10 digits');
+      return false;
+    }
+    const textFields = [
+      'name',
+      'address',
+      'gender',
+      'branch',
+      'batch',
+      'email',
+    ];
+    for (let field of textFields) {
+      if (!/[a-zA-Z]/.test(studentData[field])) {
+        Alert.alert(
+          'Error',
+          `${
+            field.charAt(0).toUpperCase() + field.slice(1)
+          } should contain at least one letter`,
+        );
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleAddStudent = async () => {
+    if (!validateInputs(newStudent)) return;
+
     try {
       setLoading(true);
       const response = await axios.post(
@@ -117,6 +146,8 @@ const AdminStudents = () => {
   };
 
   const handleUpdateStudent = async () => {
+    if (!validateInputs(editStudent)) return;
+
     try {
       setLoading(true);
       const response = await axios.put(
@@ -216,6 +247,7 @@ const AdminStudents = () => {
           </View>
         )}
 
+        {/* Modal for adding student */}
         <Modal
           animationType="slide"
           transparent={false}
@@ -255,6 +287,7 @@ const AdminStudents = () => {
               />
               <TextInput
                 style={styles.input}
+                keyboardType="name-phone-pad"
                 placeholder="Phone"
                 value={newStudent.phone}
                 onChangeText={text =>
@@ -303,6 +336,7 @@ const AdminStudents = () => {
           </View>
         </Modal>
 
+        {/* Modal for editing student */}
         <Modal
           animationType="slide"
           transparent={false}

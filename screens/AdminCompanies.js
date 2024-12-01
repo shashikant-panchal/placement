@@ -43,8 +43,35 @@ const AdminCompanies = () => {
       setLoading(false);
     }
   };
+  const validateInputs = companyData => {
+    if (!/^\d{10}$/.test(companyData.phone)) {
+      Alert.alert('Error', 'Phone number should be exactly 10 digits.');
+      return false;
+    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(companyData.email)) {
+      Alert.alert('Error', 'Please enter a valid email address.');
+      return false;
+    }
+    const textFields = ['companyName', 'address', 'website'];
+    for (let field of textFields) {
+      if (!/[a-zA-Z]/.test(companyData[field])) {
+        Alert.alert(
+          'Error',
+          `${
+            field.charAt(0).toUpperCase() + field.slice(1)
+          } must contain at least one letter.`,
+        );
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   const handleAddCompany = async () => {
+    if (!validateInputs(newCompany)) return;
+
     try {
       setLoading(true);
       const response = await axios.post(

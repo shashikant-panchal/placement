@@ -44,7 +44,35 @@ const AdminHODs = () => {
     }
   };
 
+  const validateInputs = hodData => {
+    if (!/^\d{10}$/.test(hodData.phone)) {
+      Alert.alert('Error', 'Phone number should be exactly 10 digits.');
+      return false;
+    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(hodData.email)) {
+      Alert.alert('Error', 'Please enter a valid email address.');
+      return false;
+    }
+    const textFields = ['name', 'address', 'department', 'branch'];
+    for (let field of textFields) {
+      if (!/[a-zA-Z]/.test(hodData[field])) {
+        Alert.alert(
+          'Error',
+          `${
+            field.charAt(0).toUpperCase() + field.slice(1)
+          } must contain at least one letter.`,
+        );
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleAddHOD = async () => {
+    if (!validateInputs(newHOD)) return;
+
     try {
       setLoading(true);
       const response = await axios.post(
